@@ -93,14 +93,7 @@ export default function LoginPage() {
                             </button>
                         </form>
 
-                        <div className={styles.demoHint}>
-                            <p><strong>測試帳號：</strong></p>
-                            <ul>
-                                <li>管理員：admin / admin123</li>
-                                <li>廠商：brand1 / brand123</li>
-                                <li>KOL：kol1 / kol123</li>
-                            </ul>
-                        </div>
+
 
                         <div className={styles.footer}>
                             <Link href="/" className={styles.backLink}>
