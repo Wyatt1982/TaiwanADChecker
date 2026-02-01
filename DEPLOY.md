@@ -1,135 +1,68 @@
-# 快速部署指南
+# 部署指南 Setup Guide
 
-本專案支援多種部署方式，以下是最快速的方法。
+您的專案已經準備好可以部署了！由於這是使用 Next.js 建置的專案，我們強烈建議使用 **Vercel** 進行部署，這是最簡單且效能最好的方式。
 
-## 🚀 方法一：Vercel 部署（推薦）
+## 🔹 方法一：使用 Vercel 網站 (推薦)
+
+最標準的做法是將程式碼推送到 GitHub，然後連接 Vercel。
 
 ### 步驟 1：推送到 GitHub
+如果您還沒有建立 GitHub Repository，請先建立一個，然後執行：
+
 ```bash
-git init
-git add .
-git commit -m "Initial commit"
+git remote add origin <您的-repo-url>
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/kol-ad-reviewer.git
 git push -u origin main
 ```
 
-### 步驟 2：在 Vercel 部署
-1. 前往 [vercel.com](https://vercel.com) 並登入
-2. 點擊 **New Project**
-3. 選擇你的 GitHub repository
-4. 設定環境變數：
-   - `DATABASE_URL` - PostgreSQL 連線字串
-   - `OPENAI_API_KEY` - OpenAI API 金鑰（選填）
-5. 點擊 **Deploy**
+*(注意：我們剛剛已經幫您執行了 `git commit`，您目前的修改都已保存)*
 
-### 預估時間：5 分鐘
+### 步驟 2：在 Vercel 匯入專案
+1.前往 [Vercel Dashboard](https://vercel.com/dashboard)
+2.點擊 **"Add New..."** -> **"Project"**
+3.選擇您剛剛推送的 GitHub Repository
+4.點擊 **"Import"**
 
----
+### 步驟 3：設定環境變數 (Environment Variables)
+在部署頁面的 **"Environment Variables"** 區塊，請務必新增以下變數（這非常重要，否則 AI 功能無法運作）：
 
-## 🐳 方法二：Docker 部署
+| 變數名稱 (Name) | 值 (Value) | 說明 |
+|---|---|---|
+| `GOOGLE_GENERATIVE_AI_API_KEY` | `AIzaSy...` (您的 Key) | 用於 AI 審核功能 |
+| `DATABASE_URL` | `postgresql://...:6543/postgres?pgbouncer=true` | Supabase Transaction Pooler 連線 |
+| `DIRECT_URL` | `postgresql://...:5432/postgres` | Supabase Session Pooler 連線 |
 
-### 建立 Dockerfile
-```dockerfile
-FROM node:20-alpine AS base
+*(您可以參考專案根目錄下的 `.env` 檔案複製這些值)*
 
-# 安裝依賴
-FROM base AS deps
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-
-# 建構
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN npm run build
-
-# 產品化
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-EXPOSE 3000
-CMD ["node", "server.js"]
-```
-
-### 執行
-```bash
-docker build -t kol-ad-reviewer .
-docker run -p 3000:3000 kol-ad-reviewer
-```
+### 步驟 4：完成部署
+點擊 **"Deploy"**，等待約 1-2 分鐘，您的網站就會上線了！🎉
 
 ---
 
-## 🗄️ 資料庫設定
+## 🔹 方法二：使用 Vercel CLI (快速測試)
 
-### 選項 A：Supabase（免費）
-1. 前往 [supabase.com](https://supabase.com) 建立專案
-2. 複製 **Connection string** (PostgreSQL)
-3. 設定為 `DATABASE_URL` 環境變數
+如果您不想經過 GitHub，也可以直接從電腦上傳部署：
 
-### 選項 B：Neon（免費）
-1. 前往 [neon.tech](https://neon.tech) 建立專案
-2. 複製連線字串
-3. 設定為 `DATABASE_URL` 環境變數
-
-### 初始化資料庫
-```bash
-npx prisma db push
-```
-
----
-
-## ⚙️ 環境變數
-
-在 `.env` 或部署平台設定：
-
-```env
-# 必要
-DATABASE_URL="postgresql://user:password@host:5432/database"
-
-# 選填 (啟用 AI 審核)
-OPENAI_API_KEY="sk-..."
-```
-
----
-
-## 📋 部署檢查清單
-
-- [ ] 推送程式碼到 GitHub
-- [ ] 在 Vercel/Railway 建立專案
-- [ ] 設定 PostgreSQL 資料庫
-- [ ] 設定環境變數
-- [ ] 執行資料庫遷移
-- [ ] 測試 API 端點
-- [ ] 設定自訂網域（選填）
-
----
-
-## 🔗 推薦平台
-
-| 平台 | 類型 | 免費額度 |
-|------|------|----------|
-| [Vercel](https://vercel.com) | 前端 + API | 無限 |
-| [Supabase](https://supabase.com) | PostgreSQL | 500MB |
-| [Neon](https://neon.tech) | PostgreSQL | 512MB |
-| [Railway](https://railway.app) | 全端 | $5/月 |
-
----
-
-## 💡 快速部署命令
-
-一鍵部署到 Vercel：
+1.在終端機執行：
 ```bash
 npx vercel
 ```
 
-需要先安裝 Vercel CLI：
-```bash
-npm i -g vercel
-```
+2.依照螢幕指示操作：
+   - Set up and deploy? **Yes**
+   - Which scope? (選擇您的帳號)
+   - Link to existing project? **No**
+   - Project name? (按 Enter 使用預設)
+   - In which directory? (按 Enter)
+
+3.部署完成後，CLI 會給您一個網址 (例如: `https://ad-check-helper.vercel.app`)
+
+4.**重要**：部署後，請記得到 Vercel 網站該專案的 **Settings > Environment Variables** 補上 API Key，然後重新 Redeploy。
+
+---
+
+## 💡 注意事項
+
+- **資料庫連線**：我們已經設定好 Supabase 的 Connection Pooling，這對 Serverless 環境（如 Vercel）非常重要，可以避免連線數耗盡。
+- **冷啟動**：免費版 Vercel 可能會有冷啟動延遲，這是正常的。
+- **後台管理**：上線後，您可以在網址後加上 `/admin` 進入管理後台 (例如: `https://your-site.vercel.app/admin`)。
