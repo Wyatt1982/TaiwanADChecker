@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Navbar } from '@/components/layout/Navbar'
 import { sponsorshipConfig, getRemainingDays, getProgressPercentage } from '@/data/sponsorship'
-import { getServiceStatus, updateServiceStatus, ServiceStatus } from '@/data/serviceStatus'
+import { ServiceStatus } from '@/data/serviceStatus'
+import { getSystemStatus, updateSystemStatusAction } from '@/app/actions/settings'
 import styles from './page.module.css'
 
 // 模擬數據
@@ -83,10 +84,11 @@ export default function AdminPage() {
             })
         }
 
-        // 讀取服務狀態
-        const status = getServiceStatus()
-        setServiceStatus(status)
-        setMaintenanceMsg(status.maintenanceMessage)
+        // 讀取服務狀態 (Server Action)
+        getSystemStatus().then(status => {
+            setServiceStatus(status)
+            setMaintenanceMsg(status.maintenanceMessage)
+        })
 
         // 讀取反饋資料
         const savedFeedbacks = localStorage.getItem('user-feedbacks')
@@ -100,41 +102,49 @@ export default function AdminPage() {
         }
     }, [])
 
+    // Helper to update status
+    const updateStatus = async (newStatus: ServiceStatus) => {
+        setServiceStatus(newStatus)
+        try {
+            await updateSystemStatusAction(newStatus)
+        } catch (error) {
+            console.error('Failed to update status', error)
+            alert('更新設定失敗')
+        }
+    }
+
     // 切換 LLM 服務
     const toggleLLM = () => {
         if (!serviceStatus) return
-        const updated = updateServiceStatus({ llmEnabled: !serviceStatus.llmEnabled })
-        setServiceStatus(updated)
+        updateStatus({ ...serviceStatus, llmEnabled: !serviceStatus.llmEnabled })
     }
 
     // 切換維護模式
     const toggleMaintenance = () => {
         if (!serviceStatus) return
-        const updated = updateServiceStatus({
+        updateStatus({
+            ...serviceStatus,
             maintenanceMode: !serviceStatus.maintenanceMode,
             maintenanceMessage: maintenanceMsg,
         })
-        setServiceStatus(updated)
     }
 
     // 切換 KOL 資料庫
     const toggleKolDatabase = () => {
         if (!serviceStatus) return
-        const updated = updateServiceStatus({ kolDatabaseEnabled: !serviceStatus.kolDatabaseEnabled })
-        setServiceStatus(updated)
+        updateStatus({ ...serviceStatus, kolDatabaseEnabled: !serviceStatus.kolDatabaseEnabled })
     }
 
     // 切換徵人專區
     const toggleJobBoard = () => {
         if (!serviceStatus) return
-        const updated = updateServiceStatus({ jobBoardEnabled: !serviceStatus.jobBoardEnabled })
-        setServiceStatus(updated)
+        updateStatus({ ...serviceStatus, jobBoardEnabled: !serviceStatus.jobBoardEnabled })
     }
 
     // 更新維護訊息
     const saveMaintnenaceMessage = () => {
-        const updated = updateServiceStatus({ maintenanceMessage: maintenanceMsg })
-        setServiceStatus(updated)
+        if (!serviceStatus) return
+        updateStatus({ ...serviceStatus, maintenanceMessage: maintenanceMsg })
     }
 
     // 計算每次審核成本

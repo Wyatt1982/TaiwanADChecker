@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
@@ -324,4 +325,16 @@ enum PhraseSeverity {
   MEDIUM    // 應該避免
   HIGH      // 禁止使用
   CRITICAL  // 絕對禁止
+}
+
+// ============================================
+// 系統設定
+// ============================================
+
+model SystemSetting {
+  id                  String   @id @default(cuid())
+  key                 String   @unique // e.g. "service_status"
+  value               Json     // 存儲完整的 ServiceStatus JSON
+  description         String?
+  updatedAt           DateTime @updatedAt
 }
