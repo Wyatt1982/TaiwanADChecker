@@ -1,0 +1,228 @@
+.banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+}
+
+.banner.warning {
+    background: var(--error-50);
+    border-color: var(--error-200);
+}
+
+.banner.caution {
+    background: var(--warning-50);
+    border-color: var(--warning-200);
+}
+
+.banner.info {
+    background: var(--primary-50);
+    border-color: var(--primary-200);
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+    min-width: 0;
+}
+
+.icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.text strong {
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+}
+
+.text span {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.text a {
+    color: var(--primary-600);
+    text-decoration: underline;
+}
+
+/* Progress Bar */
+.progressBar {
+    width: 100px;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.progressFill {
+    height: 100%;
+    background: var(--primary-500);
+    border-radius: 3px;
+    transition: width 0.3s;
+}
+
+.banner.warning .progressFill {
+    background: var(--error-500);
+}
+
+.banner.caution .progressFill {
+    background: var(--warning-500);
+}
+
+/* Buttons */
+.btn,
+.upgradeBtn {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn {
+    background: var(--primary-600);
+    color: white;
+    text-decoration: none;
+    border: none;
+}
+
+.btn:hover {
+    background: var(--primary-700);
+}
+
+.upgradeBtn {
+    background: transparent;
+    color: var(--primary-600);
+    border: 1px solid var(--primary-300);
+}
+
+.upgradeBtn:hover {
+    background: var(--primary-50);
+}
+
+/* Plans Modal */
+.plansModal {
+    width: 100%;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-color);
+}
+
+.plansGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+}
+
+.planCard {
+    padding: var(--space-4);
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.planCard.current {
+    border-color: var(--primary-400);
+    background: var(--primary-50);
+}
+
+.planName {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-2);
+}
+
+.planPrice {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--primary-600);
+    margin-bottom: var(--space-1);
+}
+
+.planLimit {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+}
+
+.planFeatures {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-4);
+    text-align: left;
+}
+
+.planFeatures li {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    padding: var(--space-1) 0;
+}
+
+.currentBadge {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    background: var(--primary-100);
+    color: var(--primary-700);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius);
+}
+
+.selectBtn {
+    padding: var(--space-2) var(--space-6);
+    background: var(--primary-600);
+    color: white;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.selectBtn:hover {
+    background: var(--primary-700);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .banner {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .content {
+        flex-wrap: wrap;
+    }
+
+    .progressBar {
+        width: 100%;
+        order: 10;
+        margin-top: var(--space-2);
+    }
+
+    .btn,
+    .upgradeBtn {
+        text-align: center;
+    }
+}

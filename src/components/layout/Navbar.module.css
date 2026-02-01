@@ -1,0 +1,225 @@
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-4) var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: var(--text-lg);
+}
+
+.logoIcon {
+    font-size: var(--text-2xl);
+}
+
+.logoText {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: color var(--transition);
+    position: relative;
+}
+
+.link:hover {
+    color: var(--text-primary);
+}
+
+.link::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-500);
+    /* 硃砂印紅 */
+    transition: width var(--transition);
+    border-radius: 1px;
+}
+
+.link:hover::after {
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.adminBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border-radius: var(--radius-full);
+    transition: all var(--transition);
+}
+
+.adminBtn:hover {
+    background: var(--accent-50);
+    color: var(--accent-600);
+    /* 硃砂印紅 */
+}
+
+/* Login Button */
+.loginBtn {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-5);
+    background: var(--accent-500);
+    /* 硃砂印紅 */
+    color: white;
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border-radius: var(--radius-full);
+    transition: all var(--transition);
+}
+
+.loginBtn:hover {
+    background: var(--accent-600);
+}
+
+/* User Menu */
+.userMenu {
+    position: relative;
+}
+
+.userBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-tertiary);
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    transition: all var(--transition);
+}
+
+.userBtn:hover {
+    background: var(--accent-50);
+}
+
+.avatar {
+    font-size: var(--text-lg);
+}
+
+.userName {
+    color: var(--text-primary);
+    font-weight: 500;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.arrow {
+    color: var(--text-muted);
+    font-size: 0.6rem;
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    min-width: 180px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    z-index: var(--z-dropdown);
+}
+
+.dropdownHeader {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dropdownHeader span {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.dropdownHeader small {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+}
+
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: none;
+    border: none;
+    text-align: left;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.dropdownItem:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .links {
+        display: none;
+    }
+
+    .container {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .userName {
+        display: none;
+    }
+}

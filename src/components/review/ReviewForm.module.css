@@ -1,0 +1,227 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sectionLabel {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.helpBtn {
+    padding: var(--space-1) var(--space-3);
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.helpBtn:hover {
+    background: var(--bg-secondary);
+    color: var(--accent-500);
+    border-color: var(--accent-500);
+}
+
+.selectedHint {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    margin: 0;
+}
+
+.helpPanel {
+    padding: var(--space-4);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.helpPanel h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-3);
+    cursor: default;
+}
+
+.helpPanel h4::before {
+    content: '📋';
+}
+
+.helpPanel ul {
+    margin: 0;
+    padding-left: var(--space-4);
+}
+
+.helpPanel li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+    line-height: 1.5;
+}
+
+.helpPanel li strong {
+    color: var(--text-primary);
+}
+
+/* 產品類別網格 */
+.productGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: var(--space-3);
+}
+
+.productBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.productBtn:hover {
+    border-color: var(--gray-300);
+    background: var(--bg-secondary);
+}
+
+.productBtnActive {
+    background: var(--accent-50);
+    border-color: var(--accent-500);
+}
+
+/* 自動偵測按鈕特殊樣式 */
+.productBtnAuto {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-color: #38bdf8;
+}
+
+.productBtnAuto.productBtnActive {
+    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+    border-color: #0284c7;
+}
+
+.productBtnAuto.productBtnActive .productLabel {
+    color: white;
+}
+
+.productBtnAuto.productBtnActive .productIcon {
+    filter: grayscale(0) brightness(1.2);
+}
+
+.productIcon {
+    font-size: var(--text-2xl);
+}
+
+.productLabel {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.productBtnActive .productLabel {
+    color: var(--accent-600);
+    /* 硃砂印紅 */
+}
+
+/* 內容類型選擇 */
+.contentTypeRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.contentTypeBtn {
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.contentTypeBtn:hover {
+    background: var(--gray-200);
+    color: var(--text-primary);
+}
+
+.contentTypeBtnActive {
+    background: var(--accent-500);
+    /* 硃砂印紅 */
+    border-color: var(--accent-500);
+    color: white;
+}
+
+/* 統計 */
+.stats {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.statItem strong {
+    color: var(--text-primary);
+}
+
+/* 提交按鈕 */
+.submitBtn {
+    width: 100%;
+    margin-top: var(--space-2);
+}
+
+@media (max-width: 640px) {
+    .productGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .productBtn {
+        padding: var(--space-3);
+    }
+
+    .productIcon {
+        font-size: var(--text-xl);
+    }
+}

@@ -1,0 +1,311 @@
+/* Floating Button */
+.floatingBtn {
+    position: fixed;
+    bottom: var(--space-6);
+    right: var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-lg), 0 4px 20px rgba(79, 70, 229, 0.3);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    z-index: var(--z-fixed);
+    transition: all 0.3s ease;
+}
+
+.floatingBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl), 0 6px 30px rgba(79, 70, 229, 0.4);
+}
+
+.floatingBtn.hidden {
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+.btnIcon {
+    font-size: 1.2rem;
+}
+
+.btnText {
+    display: block;
+}
+
+@media (max-width: 640px) {
+    .floatingBtn {
+        padding: var(--space-3);
+        border-radius: 50%;
+    }
+
+    .btnText {
+        display: none;
+    }
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: var(--space-6);
+    z-index: var(--z-modal);
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Panel */
+.panel {
+    width: 100%;
+    max-width: 380px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2xl);
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header h3 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.closeBtn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: none;
+    border-radius: 50%;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.closeBtn:hover {
+    background: var(--danger-100);
+    color: var(--danger-600);
+}
+
+.content {
+    padding: var(--space-5);
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Type Selection */
+.typeList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.typeBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.typeBtn:hover {
+    background: var(--primary-50);
+    border-color: var(--primary-300);
+}
+
+.typeLabel {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.typeDesc {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+/* Form */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.field label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.field textarea,
+.field input {
+    padding: var(--space-3);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: var(--text-base);
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field textarea:focus,
+.field input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px var(--primary-100);
+}
+
+.actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+}
+
+.backBtn {
+    flex: 1;
+    padding: var(--space-3);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.backBtn:hover {
+    background: var(--bg-tertiary);
+}
+
+.submitBtn {
+    flex: 2;
+    padding: var(--space-3);
+    background: var(--primary-600);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: var(--primary-700);
+}
+
+.submitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Success */
+.success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-6) 0;
+}
+
+.successIcon {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+}
+
+.success p {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.successHint {
+    font-size: var(--text-sm) !important;
+    font-weight: 400 !important;
+    color: var(--text-muted) !important;
+    margin-top: var(--space-3) !important;
+    line-height: 1.6;
+}
+
+.doneBtn {
+    margin-top: var(--space-5);
+    padding: var(--space-3) var(--space-8);
+    background: var(--primary-600);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--text-base);
+    font-weight: 600;
+}
+
+.doneBtn:hover {
+    background: var(--primary-700);
+}
+
+/* Footer */
+.footer {
+    padding: var(--space-3) var(--space-5);
+    background: var(--bg-secondary);
+    text-align: center;
+}
+
+.footer small {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}

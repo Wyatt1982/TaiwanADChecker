@@ -1,0 +1,232 @@
+.main {
+    min-height: 100vh;
+    background: var(--bg-secondary);
+    padding-bottom: var(--space-20);
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+}
+
+.header {
+    margin-bottom: var(--space-8);
+}
+
+.title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-2);
+}
+
+.subtitle {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Form */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.section {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+}
+
+.sectionTitle {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-5);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.field {
+    margin-bottom: var(--space-4);
+}
+
+.field:last-child {
+    margin-bottom: 0;
+}
+
+.fieldRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: var(--space-3);
+    font-size: var(--text-base);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: var(--primary-400);
+}
+
+.textarea {
+    resize: vertical;
+}
+
+.checkboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition);
+}
+
+.checkboxLabel:has(input:checked) {
+    background: var(--primary-50);
+    border-color: var(--primary-300);
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: flex-end;
+}
+
+.cancelBtn {
+    padding: var(--space-3) var(--space-6);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.cancelBtn:hover {
+    background: var(--bg-secondary);
+}
+
+.submitBtn {
+    padding: var(--space-3) var(--space-8);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.submitBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Success Card */
+.successCard {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-10);
+    text-align: center;
+}
+
+.successIcon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: var(--space-4);
+}
+
+.successCard h2 {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-3);
+}
+
+.successCard p {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-2);
+}
+
+.note {
+    font-size: var(--text-sm) !important;
+    color: var(--text-muted) !important;
+    margin-bottom: var(--space-6) !important;
+}
+
+.backBtn {
+    padding: var(--space-3) var(--space-6);
+    background: var(--primary-600);
+    color: white;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.backBtn:hover {
+    background: var(--primary-700);
+}
+
+@media (max-width: 640px) {
+    .fieldRow {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .cancelBtn,
+    .submitBtn {
+        width: 100%;
+    }
+}

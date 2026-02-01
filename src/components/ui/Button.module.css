@@ -1,0 +1,85 @@
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    font-weight: 500;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-decoration: none;
+    font-family: inherit;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Variants */
+.primary {
+    background: var(--accent-500);
+    /* 硃砂印紅 */
+    color: white;
+    box-shadow: var(--shadow-accent);
+}
+
+.primary:hover:not(:disabled) {
+    background: var(--accent-600);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(199, 67, 50, 0.3);
+}
+
+.secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.secondary:hover:not(:disabled) {
+    background: var(--gray-200);
+}
+
+.ghost {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.ghost:hover:not(:disabled) {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Sizes */
+.sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+}
+
+.md {
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-sm);
+}
+
+.lg {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--text-base);
+    border-radius: var(--radius-md);
+}
+
+/* Loading spinner */
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

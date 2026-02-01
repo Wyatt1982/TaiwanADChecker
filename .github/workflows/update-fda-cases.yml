@@ -1,0 +1,63 @@
+name: 定期更新食藥署案例資料
+
+on:
+  # 每週一 09:00 (UTC+8，即 UTC 01:00) 自動執行
+  schedule:
+    - cron: '0 1 * * 1'
+  
+  # 手動觸發
+  workflow_dispatch:
+
+jobs:
+  update-fda-cases:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run FDA cases scraper
+        run: npx tsx scripts/scrape-fda-cases.ts
+        env:
+          NODE_ENV: production
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet src/data/scraped-cases.ts; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add src/data/scraped-cases.ts src/data/scraped-cases.json
+          git commit -m "🔄 自動更新食藥署案例資料 $(date +'%Y-%m-%d')"
+          git push
+      
+      - name: Create summary
+        run: |
+          echo "## 📊 更新摘要" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
+            echo "✅ 已更新食藥署案例資料" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "新案例已提交至 \`src/data/scraped-cases.ts\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ 無新案例需要更新" >> $GITHUB_STEP_SUMMARY
+          fi

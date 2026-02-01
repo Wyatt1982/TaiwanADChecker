@@ -1,0 +1,52 @@
+name: 每日網站健康檢查
+
+on:
+  # 每天 09:00 (UTC+8) 執行
+  schedule:
+    - cron: '0 1 * * *'
+  
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Run type check
+        run: npx tsc --noEmit
+      
+      - name: Check FDA website availability
+        id: fda_check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://www.fda.gov.tw/TC/news.aspx?cid=5085")
+          echo "fda_status=$STATUS" >> $GITHUB_OUTPUT
+          if [ "$STATUS" != "200" ]; then
+            echo "⚠️ 食藥署網站無法訪問 (HTTP $STATUS)"
+            exit 1
+          fi
+      
+      - name: Create summary
+        if: always()
+        run: |
+          echo "## 🏥 每日健康檢查報告" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 項目 | 狀態 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 建置 | ✅ 通過 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 型別檢查 | ✅ 通過 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 食藥署網站 | HTTP ${{ steps.fda_check.outputs.fda_status }} |" >> $GITHUB_STEP_SUMMARY

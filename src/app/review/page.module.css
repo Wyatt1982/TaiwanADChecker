@@ -1,0 +1,231 @@
+.main {
+    min-height: 100vh;
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-16);
+    background: var(--bg-secondary);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: var(--space-10);
+}
+
+.title {
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    margin-bottom: var(--space-3);
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+}
+
+/* Usage Info */
+.usageInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+}
+
+.usageLabel {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.upgradeLink {
+    color: var(--accent-500);
+    /* 硃砂印紅 */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.upgradeLink:hover {
+    color: var(--accent-600);
+    text-decoration: underline;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+    align-items: start;
+}
+
+.formSection,
+.resultSection {
+    min-height: 500px;
+}
+
+.card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-card);
+}
+
+/* Loading State */
+.loadingState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--gray-200);
+    border-top-color: var(--accent-500);
+    /* 硃砂印紅 */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: var(--space-4);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingHint {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-top: var(--space-2);
+}
+
+/* Error State */
+.errorState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: var(--space-8);
+    background: var(--risk-high-bg);
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.errorIcon {
+    font-size: 3rem;
+    margin-bottom: var(--space-4);
+}
+
+.errorState p {
+    color: #b91c1c;
+    margin-bottom: var(--space-4);
+}
+
+.retryBtn {
+    padding: var(--space-2) var(--space-5);
+    background: var(--error);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: opacity var(--transition);
+}
+
+.retryBtn:hover {
+    opacity: 0.9;
+}
+
+/* Empty State */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: var(--space-8);
+    background: var(--bg-primary);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.emptyIcon {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+    opacity: 0.4;
+}
+
+.emptyState h3 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.emptyState p {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+@media (max-width: 1024px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+
+    .formSection,
+    .resultSection {
+        min-height: auto;
+    }
+}
+
+/* Maintenance Banner */
+.maintenanceBanner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #f59e0b;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-6);
+}
+
+.maintenanceIcon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+.maintenanceContent h3 {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: #92400e;
+    margin: 0 0 var(--space-1);
+}
+
+.maintenanceContent p {
+    font-size: var(--text-sm);
+    color: #b45309;
+    margin: 0;
+}

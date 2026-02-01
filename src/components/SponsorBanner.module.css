@@ -1,0 +1,204 @@
+.banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: var(--space-3) var(--space-6);
+    z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.emoji {
+    font-size: 2rem;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.textGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.title {
+    color: #fff;
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: var(--text-xs);
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+    max-width: 300px;
+}
+
+.progressWrapper {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.5s ease;
+}
+
+.progressBar.healthy {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.progressBar.warning {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.progressBar.danger {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.progressLabel {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    min-width: 35px;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.donateButton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+}
+
+.donateButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+.closeButton {
+    padding: var(--space-1) var(--space-2);
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.closeButton:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* 最小化按鈕 */
+.miniButton {
+    position: fixed;
+    bottom: var(--space-4);
+    right: var(--space-4);
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    z-index: 1000;
+    transition: all 0.2s ease;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.miniButton:hover {
+    transform: scale(1.1);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 4px 25px rgba(245, 158, 11, 0.6);
+    }
+}
+
+/* 響應式 */
+@media (max-width: 768px) {
+    .content {
+        flex-wrap: wrap;
+        gap: var(--space-3);
+    }
+
+    .left {
+        flex: 1;
+    }
+
+    .center {
+        order: 3;
+        flex: 100%;
+        max-width: none;
+    }
+
+    .right {
+        flex-shrink: 0;
+    }
+
+    .donateButton {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--text-xs);
+    }
+}

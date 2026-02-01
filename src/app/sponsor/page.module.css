@@ -1,0 +1,302 @@
+.main {
+    min-height: 100vh;
+    background: var(--bg-secondary);
+    padding-bottom: var(--space-20);
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: var(--space-10);
+}
+
+.title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-3);
+}
+
+.subtitle {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Section */
+.section {
+    margin-bottom: var(--space-10);
+}
+
+.sectionTitle {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-5);
+}
+
+/* Stats Grid */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4);
+}
+
+.statCard {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.statIcon {
+    font-size: 2rem;
+}
+
+.statContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.statValue {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.statLabel {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+/* Fund Card */
+.fundCard {
+    background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    color: white;
+}
+
+.fundHeader {
+    margin-bottom: var(--space-5);
+}
+
+.fundDesc {
+    font-size: var(--text-base);
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.fundDesc strong {
+    color: #fbbf24;
+}
+
+.fundProgress {
+    margin-bottom: var(--space-5);
+}
+
+.progressLabel {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--space-2);
+}
+
+.progressBar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease;
+}
+
+.fundInfo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+}
+
+.fundItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    text-align: center;
+}
+
+.fundLabel {
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.fundValue {
+    font-size: var(--text-xl);
+    font-weight: 700;
+}
+
+/* Plans Grid */
+.plansGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+}
+
+.planCard {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all var(--transition);
+}
+
+.planCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.planGold {
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.planSilver {
+    border-color: #9ca3af;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+.planBronze {
+    border-color: #d97706;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+}
+
+.planCoffee {
+    border-color: #92400e;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.planBadge {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.planPrice {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--primary-700);
+    margin-bottom: var(--space-4);
+}
+
+.planFeatures {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.planFeatures li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding: var(--space-1) 0;
+}
+
+/* Contact Card */
+.contactCard {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    text-align: center;
+}
+
+.contactTitle {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-3);
+}
+
+.contactDesc {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-4);
+}
+
+.contactBtn {
+    display: inline-block;
+    padding: var(--space-3) var(--space-6);
+    background: var(--primary-600);
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    transition: all var(--transition);
+}
+
+.contactBtn:hover {
+    background: var(--primary-700);
+    transform: translateY(-2px);
+}
+
+.contactNote {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+
+.contactNote ul {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-2) 0 0;
+}
+
+.contactNote li {
+    padding: var(--space-1) 0;
+}
+
+/* Back Link */
+.backLink {
+    text-align: center;
+    margin-top: var(--space-8);
+}
+
+.backLink a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    transition: color var(--transition);
+}
+
+.backLink a:hover {
+    color: var(--primary-600);
+}
+
+@media (max-width: 640px) {
+    .fundInfo {
+        grid-template-columns: 1fr;
+    }
+
+    .plansGrid {
+        grid-template-columns: 1fr;
+    }
+}

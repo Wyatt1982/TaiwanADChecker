@@ -1,0 +1,327 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// 用戶系統
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  password      String?   // 密碼 hash (可選，若用 OAuth 則無)
+  role          UserRole  @default(KOL)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // NextAuth 關聯
+  accounts      Account[]
+  sessions      Session[]
+
+  // 業務關聯
+  kolProfile    KolProfile?
+  brandProfile  BrandProfile?
+  reviews       AdReview[]
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum UserRole {
+  KOL      // 網紅/內容創作者
+  BRAND    // 品牌/廣告主
+  AGENCY   // 代理商
+  ADMIN    // 系統管理員
+}
+
+// ============================================
+// KOL 資料
+// ============================================
+
+model KolProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  displayName     String?          // 顯示名稱
+  bio             String?          // 簡介
+  avatar          String?          // 頭像 URL
+  
+  // 社群平台資訊 (JSON 格式)
+  // { "instagram": "@handle", "youtube": "channel_url", ... }
+  platforms       Json?
+  
+  // 統計數據
+  totalFollowers  Int       @default(0)
+  categories      String[]  // 內容類別 ["美妝", "健康", "3C"]
+  
+  // 績效追蹤
+  totalReviews    Int       @default(0)
+  passedReviews   Int       @default(0)
+  avgRiskScore    Float?    // 平均風險分數
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // 與品牌的合作關係
+  brandCollabs    BrandKolRelation[]
+}
+
+// ============================================
+// 品牌/廣告主資料
+// ============================================
+
+model BrandProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  companyName     String            // 公司名稱
+  businessId      String?           // 統一編號
+  industry        String?           // 產業類別
+  website         String?
+  logo            String?
+
+  // 訂閱方案
+  plan            SubscriptionPlan  @default(FREE)
+  planExpiresAt   DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // 管理的 KOL 關係
+  kolRelations    BrandKolRelation[]
+}
+
+enum SubscriptionPlan {
+  FREE        // 免費版
+  STARTER     // 入門版
+  PRO         // 專業版
+  ENTERPRISE  // 企業版
+}
+
+// 品牌與 KOL 的合作關係
+model BrandKolRelation {
+  id              String   @id @default(cuid())
+  brandId         String
+  kolId           String
+  
+  brand           BrandProfile  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  kol             KolProfile    @relation(fields: [kolId], references: [id], onDelete: Cascade)
+  
+  status          CollabStatus  @default(PENDING)
+  notes           String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([brandId, kolId])
+}
+
+enum CollabStatus {
+  PENDING     // 待確認
+  ACTIVE      // 合作中
+  PAUSED      // 暫停
+  ENDED       // 結束
+}
+
+// ============================================
+// 廣告審核系統
+// ============================================
+
+model AdReview {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  
+  // 審核內容
+  title           String?             // 標題 (可選)
+  content         String    @db.Text  // 原始文案內容
+  contentType     ContentType
+  productType     ProductType
+  productName     String?             // 產品名稱
+  
+  // 審核結果
+  status          ReviewStatus  @default(PENDING)
+  riskLevel       RiskLevel?
+  riskScore       Float?        // 0-100 分
+  
+  // 問題清單 (JSON)
+  // [{ "type": "banned_claim", "text": "治療...", "severity": "high", "law": "食安法", "suggestion": "..." }]
+  issues          Json?
+  
+  // AI 修改建議
+  suggestions     Json?
+  revisedContent  String?   @db.Text  // AI 建議的修正版本
+  
+  // 元數據
+  processingTime  Int?      // 處理時間 (ms)
+  llmModel        String?   // 使用的 LLM 模型
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum ContentType {
+  SCRIPT      // 影片腳本
+  POST        // 社群貼文
+  VIDEO_DESC  // 影片描述
+  STORY       // 限時動態
+  ARTICLE     // 部落格文章
+  AD_COPY     // 廣告文案
+}
+
+enum ProductType {
+  HEALTH_FOOD     // 保健食品
+  COSMETICS       // 化妝品
+  MEDICAL_BEAUTY  // 醫美療程
+  FOOD            // 一般食品
+  ALCOHOL         // 酒類
+  TOBACCO         // 菸品
+  MEDICINE        // 藥品
+  OTHER           // 其他
+}
+
+enum ReviewStatus {
+  PENDING     // 處理中
+  COMPLETED   // 已完成
+  FAILED      // 處理失敗
+}
+
+enum RiskLevel {
+  SAFE        // 安全 (0-20)
+  LOW         // 低風險 (21-40)
+  MEDIUM      // 中風險 (41-60)
+  HIGH        // 高風險 (61-80)
+  CRITICAL    // 嚴重違規 (81-100)
+}
+
+// ============================================
+// 法規知識庫
+// ============================================
+
+model Regulation {
+  id              String      @id @default(cuid())
+  category        ProductType
+  
+  title           String              // 法規條文標題
+  content         String    @db.Text  // 法規內容
+  source          String              // 法源依據 (如: 食品安全衛生管理法第28條)
+  sourceUrl       String?             // 原文連結
+  
+  // 違規相關
+  penalty         String?             // 罰則說明
+  minFine         Int?                // 最低罰款
+  maxFine         Int?                // 最高罰款
+  
+  // 關鍵字與搜尋
+  keywords        String[]            // 相關關鍵字
+  bannedPhrases   String[]            // 禁用詞彙
+  
+  // 語意搜尋用 (pgvector)
+  // embedding    Unsupported("vector(1536)")?
+  
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ============================================
+// 開罰案例庫
+// ============================================
+
+model PenaltyCase {
+  id              String      @id @default(cuid())
+  category        ProductType
+  
+  // 案例資訊
+  title           String              // 案例標題
+  description     String    @db.Text  // 違規描述
+  violationType   String              // 違規類型
+  violationText   String?   @db.Text  // 違規原文
+  
+  // 裁罰資訊
+  penalty         String              // 裁罰結果
+  fineAmount      Int?                // 罰款金額
+  date            DateTime            // 裁罰日期
+  authority       String?             // 裁罰機關
+  
+  // 來源
+  source          String?             // 資料來源
+  sourceUrl       String?             // 原文連結
+  caseNumber      String?             // 案號
+  
+  // 語意搜尋用
+  // embedding    Unsupported("vector(1536)")?
+  
+  isPublic        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ============================================
+// 禁用詞彙庫
+// ============================================
+
+model BannedPhrase {
+  id              String      @id @default(cuid())
+  phrase          String      @unique   // 禁用詞彙
+  category        ProductType
+  severity        PhraseSeverity
+  reason          String?               // 禁用原因
+  suggestion      String?               // 替代建議
+  lawReference    String?               // 相關法條
+  
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum PhraseSeverity {
+  LOW       // 建議避免
+  MEDIUM    // 應該避免
+  HIGH      // 禁止使用
+  CRITICAL  // 絕對禁止
+}
