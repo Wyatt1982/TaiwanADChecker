@@ -1,144 +1,90 @@
 # KOL Ad Review Helper (AI 快審通)
 
-> **For AI Agents / Cursor / Developers**: Please read the **System Architecture & Key Decisions** section carefully before making changes to database connections or deployment configurations.
+> **🤖 For AI Agents & Cursor**: Please read the **System Architecture & Key Decisions** section carefully before making changes.
 
-## Project Overview
+## 🌟 Project Overview
 
-KOL Ad Review Helper is a Next.js application designed to streamline the workflow between Brands and KOLs (Key Opinion Leaders). It features an AI-powered ad content review system, a Jobs board, and a KOL database.
+**KOL Ad Review Helper** is a Next.js application designed to streamline the workflow between Brands and KOLs (Key Opinion Leaders). It acts as an AI-powered compliance assistant, checking ad content against local regulations using Generative AI.
 
-### Core Features
+## 🛠 System Architecture (Critical Context)
 
-*   **AI Review**: Automatically analyzes ad content against compliance regulations (FDA, local laws) using Google Gemini AI.
-*   **Admin Dashboard**: Manage global system settings (maintenance mode, feature flags) via a database-backed configuration.
-*   **Jobs Board**: Platform for brands to post collaboration opportunities.
-*   **KOL Database**: Searchable database of influencers.
+### 1. Database & ORM (PostgreSQL + Prisma Adapter)
+*   **Provider**: Supabase (PostgreSQL)
+*   **Connection Strategy**: **MUST** use `@prisma/adapter-pg` with `pg` driver (PostgreSQL) to support Vercel Serverless environment.
+    *   **Reason**: Standard Prisma Client exhausts connection limits in serverless.
+    *   **Ref**: `src/lib/prisma.ts` (Adapter Implementation).
+    *   **Schema**: `prisma/schema.prisma` (`engineType = "library"`).
 
-## Tech Stack
+### 2. Authentication (Mock / Client-Side)
+*   **Current State**: **Mock Implementation** using `localStorage`.
+    *   **Ref**: `src/data/auth.ts` contains the mock logic and test accounts.
+    *   There is NO server-side session validation in `src/app/api` currently.
+*   **Future Goal**: Migrate to NextAuth (packages already installed).
 
-*   **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
-*   **Language**: TypeScript
-*   **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
-*   **ORM**: [Prisma](https://www.prisma.io/)
-*   **AI**: [AI SDK](https://sdk.vercel.ai/) (integrating Google Gemini)
-*   **Deployment**: [Vercel](https://vercel.com/)
+### 3. AI Analysis Logic
+*   **Core Service**: `src/services/analyzer.ts`
+    *   **Provider**: Google Gemini (`google('gemini-2.0-flash')`) via Vercel AI SDK.
+    *   **Fallback**: Includes a regex-based `mockAnalyzeContent` for local dev without keys.
+*   **API Endpoint**: `src/app/api/review/route.ts`
 
----
-
-## 🛠 System Architecture & Key Decisions (CRITICAL)
-
-### 1. Database Connection (Serverless Compatibility)
-This project is deployed on Vercel (Serverless). Standard Prisma connections can exhaust the database connection limit.
-*   **Solution**: We use `@prisma/adapter-pg` with the `pg` driver (PostgreSQL) to manage connections efficiently via connection pooling.
-*   **File**: `src/lib/prisma.ts` demonstrates the adapter implementation.
-*   **Schema**: `prisma/schema.prisma` uses `engineType = "library"`.
-
-### 2. System Settings (Global Config)
-*   **Old Behavior**: Used `localStorage` (Client-side only).
-*   **New Behavior**: Uses a dedicated `SystemSetting` table in Supabase.
-    *   **Model**: `key` (Unique ID), `value` (JSON).
-    *   **Access**: Server Actions (`src/app/actions/settings.ts`) handle reading/writing.
-    *   **Caching**: Updates trigger `revalidatePath` to ensure instant global propagation.
+### 4. System Settings (Global Config)
+*   **Storage**: Database-backed `SystemSetting` table (Key-Value JSON).
+*   **Access**: Server Actions in `src/app/actions/settings.ts`.
+    *   **Convention**: Use `getSystemStatus()` to read and `updateSystemStatusAction()` to write.
+    *   **Cache**: Updates trigger `revalidatePath` for immediate propagation.
 
 ---
 
-## 🚀 Getting Started (Local Development)
+## 🚀 Getting Started
 
-### 1. Prerequisites
-*   Node.js 18+
-*   npm
-*   A Supabase project
-
-### 2. Environment Variables
+### 1. Environment Setup (`.env`)
 Create a `.env` file in the root directory:
 
 ```env
-# Supabase Transaction Pooler (Port 6543) - For Application
+# Supabase Transaction Pooler (Port 6543) - Application Connection
 DATABASE_URL="postgresql://postgres.[user]:[password]@[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
 
-# Supabase Session Pooler (Port 5432) - For Migrations (Direct)
+# Supabase Session Pooler (Port 5432) - Migrations (Direct)
 DIRECT_URL="postgresql://postgres.[user]:[password]@[region].pooler.supabase.com:5432/postgres"
 
-# AI Provider
+# AI Provider Key
 GOOGLE_GENERATIVE_AI_API_KEY="AIzaSy..."
 ```
 
-### 3. Install & Run
+### 2. Installation & Run
 
 ```bash
 # Install dependencies
 npm install
 
-# Generate Prisma Client (REQUIRED after install)
+# Generate Prisma Client (CRITICAL STEP)
+# Must run this whenever schema changes or after install
 npx prisma generate
 
-# Run development server
+# Start Dev Server
 npm run dev
 ```
-
-Visit `http://localhost:3000`.
 
 ---
 
 ## 📦 Deployment (Vercel)
 
-### 1. Build Command
-The `package.json` includes a `postinstall` script:
-```json
-"scripts": {
-  "postinstall": "prisma generate"
-}
-```
-This ensures the Prisma Client is generated during the Vercel build process.
-
-### 2. Environment Variables
-You MUST set the following in Vercel Project Settings:
-*   `DATABASE_URL`
-*   `DIRECT_URL`
-*   `GOOGLE_GENERATIVE_AI_API_KEY`
-
-### 3. Deploy
-```bash
-npx vercel --prod
-```
+*   **Build Command**: The `package.json` has a `postinstall` script (`prisma generate`) to ensure client generation on Vercel.
+*   **Environment Variables**: Ensure `DATABASE_URL`, `DIRECT_URL`, and `GOOGLE_GENERATIVE_AI_API_KEY` are set in Vercel Project Settings.
 
 ---
 
-## 🔧 Maintenance Guide
+## 🔧 Maintenance & Troubleshooting
 
-### Updating Database Schema
-1.  Modify `prisma/schema.prisma`.
-2.  Push changes to DB:
-    ```bash
-    npx prisma db push
-    ```
-3.  Regenerate client:
-    ```bash
-    npx prisma generate
-    ```
+### Common Issues
+*   **"PrismaClientInitializationError: ... engine type 'client' requires ..."**
+    *   **Fix**: You are likely missing the `adapter` config. Check `src/lib/prisma.ts`.
+*   **"Repository not found" (Git Push)**
+    *   **Fix**: Check if the repo exists on GitHub. If private, ensure your PAT (Personal Access Token) has `repo` AND `workflow` scopes.
 
-### Troubleshooting
-*   **Error**: `PrismaClientInitializationError: ... engine type "client" requires ...`
-    *   **Fix**: Ensure you are using the `adapter` pattern in `src/lib/prisma.ts` and have `@prisma/adapter-pg` installed.
-*   **Error**: `Vercel Build Failed`
-    *   **Fix**: Check if `postinstall` script exists in `package.json`. Check if ENV variables are set in Vercel.
-
----
-
-## 📂 Project Structure
-
-```
-├── prisma/
-│   ├── schema.prisma    # Database Schema
-├── src/
-│   ├── app/
-│   │   ├── actions/     # Server Actions (Backend Logic)
-│   │   ├── admin/       # Admin Dashboard
-│   │   ├── jobs/        # Jobs Feature
-│   │   ├── kols/        # KOL Database Feature
-│   │   ├── api/         # API Routes (Legacy/Special use)
-│   ├── components/      # React Components
-│   ├── data/            # Mock Data & Types
-│   ├── lib/             # Utilities (Prisma Client, etc.)
-├── package.json
-└── next.config.ts
-```
+### Folder Structure
+*   `src/app/(admin)`: Admin dashboard pages.
+*   `src/app/actions`: Server Actions (Backend Logic).
+*   `src/services`: Business logic (AI, Analysis).
+*   `src/data`: Mock data and types.
+*   `prisma`: DB Schema and migrations.
