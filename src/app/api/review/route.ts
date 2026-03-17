@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ContentType, RiskLevel } from '@prisma/client'
 import { analyzeContent, getAvailableProvider, type ProductType } from '@/services/analyzer'
 import { isMockAuthEnabled } from '@/lib/mockAuth'
 import { checkRateLimit, DEFAULT_RATE_LIMIT, API_RATE_LIMIT } from '@/lib/rateLimit'
+import { createReview, markReviewFailed, saveReviewResult } from '@/services/db/reviews'
+
+function toPrismaRiskLevel(level: 'safe' | 'low' | 'medium' | 'high' | 'critical'): RiskLevel {
+    const levelMap: Record<'safe' | 'low' | 'medium' | 'high' | 'critical', RiskLevel> = {
+        safe: RiskLevel.SAFE,
+        low: RiskLevel.LOW,
+        medium: RiskLevel.MEDIUM,
+        high: RiskLevel.HIGH,
+        critical: RiskLevel.CRITICAL,
+    }
+
+    return levelMap[level]
+}
 
 // 從 request headers 取得 IP
 function getClientIP(request: NextRequest): string {
@@ -53,6 +67,7 @@ function getUserId(request: NextRequest): string | null {
 
 export async function POST(request: NextRequest) {
     const startTime = Date.now()
+    let reviewId: string | null = null
 
     // 取得識別資訊
     const clientIP = getClientIP(request)
@@ -133,9 +148,38 @@ export async function POST(request: NextRequest) {
         const provider = getAvailableProvider()
         console.log(`[Review API] Analyzing with provider: ${provider}`)
 
+        try {
+            const review = await createReview({
+                userId,
+                content,
+                contentType: contentType as ContentType,
+                productType: productType as ProductType,
+            })
+            reviewId = review.id
+        } catch (dbError) {
+            console.error('[Review API] Failed to create review log:', dbError)
+        }
+
         const result = await analyzeContent(content, productType as ProductType)
 
         const processingTime = Date.now() - startTime
+
+        if (reviewId) {
+            try {
+                await saveReviewResult({
+                    reviewId,
+                    riskLevel: toPrismaRiskLevel(result.riskLevel),
+                    riskScore: result.riskScore,
+                    issues: result.issues,
+                    suggestions: result.suggestions,
+                    revisedContent: result.revisedContent,
+                    processingTime,
+                    llmModel: result.provider || provider,
+                })
+            } catch (dbError) {
+                console.error('[Review API] Failed to save review result:', dbError)
+            }
+        }
 
         return NextResponse.json({
             ...result,
@@ -157,6 +201,19 @@ export async function POST(request: NextRequest) {
         })
     } catch (error) {
         console.error('Review API Error:', error)
+
+        if (reviewId) {
+            try {
+                await markReviewFailed(
+                    reviewId,
+                    error instanceof Error ? error.message : '審核服務發生未知錯誤',
+                    Date.now() - startTime
+                )
+            } catch (dbError) {
+                console.error('[Review API] Failed to mark review as failed:', dbError)
+            }
+        }
+
         return NextResponse.json(
             { error: '審核服務暫時無法使用' },
             { status: 500 }

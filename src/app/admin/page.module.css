@@ -454,6 +454,123 @@
     font-size: var(--text-xs);
 }
 
+.reviewSummaryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4);
+}
+
+.summaryCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.summaryLabel {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.summaryValue {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.reviewLogCard {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+}
+
+.reviewLogList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-height: 720px;
+    overflow-y: auto;
+}
+
+.reviewLogItem {
+    padding: var(--space-4);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.reviewLogHeader {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    align-items: flex-start;
+    margin-bottom: var(--space-3);
+}
+
+.reviewLogMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+}
+
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 700;
+}
+
+.statusPENDING {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.statusCOMPLETED {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+.statusFAILED {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.metaText {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+.reviewContentPreview {
+    margin: 0 0 var(--space-3);
+    color: var(--text-primary);
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.reviewLogFooter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.failureBox {
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    background: #fef2f2;
+    color: #991b1b;
+    border-radius: var(--radius);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+}
+
 /* 📮 反饋管理 */
 .feedbackCard {
     background: var(--bg-primary);

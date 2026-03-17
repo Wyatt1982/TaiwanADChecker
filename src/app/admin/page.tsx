@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Navbar } from '@/components/layout/Navbar'
 import { sponsorshipConfig, getRemainingDays, getProgressPercentage } from '@/data/sponsorship'
 import { ServiceStatus } from '@/data/serviceStatus'
+import { getAdminReviewDashboardAction } from '@/app/actions/reviews'
 import { getSystemStatus, updateSystemStatusAction } from '@/app/actions/settings'
 import { isMockAuthEnabled } from '@/lib/mockAuth'
 import styles from './page.module.css'
@@ -16,6 +17,9 @@ interface DashboardStats {
     avgRiskScore: number
     llmCalls: number
     estimatedCost: number
+    pendingReviews: number
+    failedReviews: number
+    completedReviews: number
 }
 
 // 反饋資料類型
@@ -25,6 +29,23 @@ interface FeedbackItem {
     email?: string
     page: string
     timestamp: string
+}
+
+interface ReviewLogItem {
+    id: string
+    status: 'PENDING' | 'COMPLETED' | 'FAILED'
+    riskLevel: 'SAFE' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' | null
+    riskScore: number | null
+    contentPreview: string
+    contentType: string
+    productType: string
+    submitterLabel: string
+    submitterType: 'guest' | 'member'
+    processingTime: number | null
+    llmModel: string | null
+    failureReason: string | null
+    createdAt: string
+    updatedAt: string
 }
 
 // LLM 成本計算
@@ -51,6 +72,41 @@ const feedbackTypeLabels: Record<string, { icon: string; label: string; color: s
     other: { icon: '💬', label: '其他意見', color: '#8b5cf6' },
 }
 
+const reviewStatusLabels: Record<ReviewLogItem['status'], string> = {
+    PENDING: '處理中',
+    COMPLETED: '已完成',
+    FAILED: '失敗',
+}
+
+const productTypeLabels: Record<string, string> = {
+    AUTO: '自動偵測',
+    HEALTH_FOOD: '保健食品',
+    COSMETICS: '化妝品',
+    MEDICAL_BEAUTY: '醫美療程',
+    FOOD: '一般食品',
+    ALCOHOL: '酒類',
+    TOBACCO: '菸品',
+    MEDICINE: '藥品',
+    OTHER: '其他',
+}
+
+const contentTypeLabels: Record<string, string> = {
+    SCRIPT: '影片腳本',
+    POST: '社群貼文',
+    VIDEO_DESC: '影片描述',
+    STORY: '限時動態',
+    ARTICLE: '文章',
+    AD_COPY: '廣告文案',
+}
+
+const riskLevelLabels: Record<NonNullable<ReviewLogItem['riskLevel']>, string> = {
+    SAFE: '安全',
+    LOW: '低風險',
+    MEDIUM: '中風險',
+    HIGH: '高風險',
+    CRITICAL: '嚴重違規',
+}
+
 export default function AdminPage() {
     const mockAuthEnabled = isMockAuthEnabled()
     const [stats, setStats] = useState<DashboardStats>({
@@ -60,6 +116,9 @@ export default function AdminPage() {
         avgRiskScore: 0,
         llmCalls: 0,
         estimatedCost: 0,
+        pendingReviews: 0,
+        failedReviews: 0,
+        completedReviews: 0,
     })
 
     const [selectedLlm, setSelectedLlm] = useState('gemini-2.0-flash')
@@ -67,24 +126,13 @@ export default function AdminPage() {
     const [serviceStatus, setServiceStatus] = useState<ServiceStatus | null>(null)
     const [maintenanceMsg, setMaintenanceMsg] = useState('')
     const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([])
+    const [reviewLogs, setReviewLogs] = useState<ReviewLogItem[]>([])
 
-    // 模擬從 localStorage 讀取統計
     useEffect(() => {
-        // 真實應用會從後端 API 獲取
-        const savedStats = localStorage.getItem('admin-stats')
-        if (savedStats) {
-            setStats(JSON.parse(savedStats))
-        } else {
-            // Demo 數據
-            setStats({
-                totalReviews: 156,
-                todayReviews: 12,
-                totalKols: 23,
-                avgRiskScore: 42,
-                llmCalls: 156,
-                estimatedCost: 2.34,
-            })
-        }
+        getAdminReviewDashboardAction().then((dashboard) => {
+            setStats(dashboard.stats)
+            setReviewLogs(dashboard.logs)
+        })
 
         // 讀取服務狀態 (Server Action)
         getSystemStatus().then(status => {
@@ -319,6 +367,85 @@ export default function AdminPage() {
                             </div>
                         </div>
                     </div>
+
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>🧾 送審狀態概覽</h2>
+                        <div className={styles.reviewSummaryGrid}>
+                            <div className={styles.summaryCard}>
+                                <span className={styles.summaryLabel}>已完成</span>
+                                <span className={styles.summaryValue}>{stats.completedReviews}</span>
+                            </div>
+                            <div className={styles.summaryCard}>
+                                <span className={styles.summaryLabel}>處理中</span>
+                                <span className={styles.summaryValue}>{stats.pendingReviews}</span>
+                            </div>
+                            <div className={styles.summaryCard}>
+                                <span className={styles.summaryLabel}>失敗</span>
+                                <span className={styles.summaryValue}>{stats.failedReviews}</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>📝 文案送審 Log</h2>
+                        <div className={styles.reviewLogCard}>
+                            {reviewLogs.length === 0 ? (
+                                <div className={styles.emptyFeedback}>
+                                    <span>📭</span>
+                                    <p>目前還沒有送審紀錄</p>
+                                </div>
+                            ) : (
+                                <div className={styles.reviewLogList}>
+                                    {reviewLogs.map((log) => (
+                                        <div key={log.id} className={styles.reviewLogItem}>
+                                            <div className={styles.reviewLogHeader}>
+                                                <div className={styles.reviewLogMeta}>
+                                                    <span className={`${styles.statusBadge} ${styles[`status${log.status}`]}`}>
+                                                        {reviewStatusLabels[log.status]}
+                                                    </span>
+                                                    <span className={styles.metaText}>
+                                                        {productTypeLabels[log.productType] || log.productType}
+                                                    </span>
+                                                    <span className={styles.metaText}>
+                                                        {contentTypeLabels[log.contentType] || log.contentType}
+                                                    </span>
+                                                    <span className={styles.metaText}>
+                                                        {log.submitterType === 'guest' ? '匿名訪客' : `會員：${log.submitterLabel}`}
+                                                    </span>
+                                                </div>
+                                                <span className={styles.feedbackTime}>
+                                                    {new Date(log.createdAt).toLocaleString('zh-TW')}
+                                                </span>
+                                            </div>
+
+                                            <p className={styles.reviewContentPreview}>{log.contentPreview}</p>
+
+                                            <div className={styles.reviewLogFooter}>
+                                                <span className={styles.metaText}>
+                                                    風險：
+                                                    {log.riskLevel
+                                                        ? `${riskLevelLabels[log.riskLevel]}${typeof log.riskScore === 'number' ? ` (${log.riskScore} 分)` : ''}`
+                                                        : '尚未完成'}
+                                                </span>
+                                                <span className={styles.metaText}>
+                                                    模型：{log.llmModel || '未記錄'}
+                                                </span>
+                                                <span className={styles.metaText}>
+                                                    耗時：{typeof log.processingTime === 'number' ? `${(log.processingTime / 1000).toFixed(2)} 秒` : '未記錄'}
+                                                </span>
+                                            </div>
+
+                                            {log.failureReason && (
+                                                <div className={styles.failureBox}>
+                                                    失敗原因：{log.failureReason}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </section>
 
                     {/* 營運資金 */}
                     <section className={styles.section}>
