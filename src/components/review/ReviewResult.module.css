@@ -107,6 +107,27 @@
     color: var(--primary-700);
 }
 
+.disclaimer {
+    padding: var(--space-4) var(--space-5);
+    background: var(--primary-50);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-lg);
+}
+
+.disclaimer strong {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--primary-700);
+}
+
+.disclaimer p {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
 /* 區塊標題 */
 .section {
     display: flex;
@@ -229,6 +250,102 @@
     font-weight: bold;
 }
 
+/* 消費者指引 */
+.consumerPanel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+    border: 1px solid #fdba74;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.consumerLead {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.consumerChecklist {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+}
+
+.consumerChecklistItem {
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #fed7aa;
+    border-radius: var(--radius);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.consumerLinks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+.consumerLinkCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background: var(--bg-primary);
+    border: 1px solid #fed7aa;
+    border-radius: var(--radius);
+}
+
+.consumerLinkCard h4 {
+    margin: 0;
+    font-size: var(--text-base);
+    color: var(--text-primary);
+}
+
+.consumerLinkCard p {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.consumerLinkCard small {
+    font-size: var(--text-xs);
+    line-height: 1.7;
+    color: var(--text-muted);
+}
+
+.consumerLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: var(--space-2) var(--space-4);
+    background: #c2410c;
+    color: white;
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    transition: all var(--transition);
+}
+
+.consumerLink:hover {
+    background: #9a3412;
+}
+
+.consumerNote {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.7;
+    color: var(--text-muted);
+}
+
 /* AI 修正版本 */
 .revisedContent {
     padding: var(--space-6);
@@ -277,5 +394,9 @@
 
     .scoreDesc {
         text-align: center;
+    }
+
+    .consumerLinks {
+        grid-template-columns: 1fr;
     }
 }

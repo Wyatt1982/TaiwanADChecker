@@ -124,7 +124,7 @@
   opacity: 0.9;
 }
 
-.heroImage img {
+.heroImageAsset {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -352,6 +352,187 @@
   margin-top: var(--space-3);
   font-size: var(--text-sm);
   color: var(--text-secondary);
+}
+
+/* 🧭 消費者指引區 */
+.consumerSection {
+  padding: var(--space-10) 0;
+  background: var(--bg-primary);
+}
+
+.consumerHeader {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto var(--space-8);
+}
+
+.consumerBadge {
+  display: inline-block;
+  padding: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-3);
+  background: #ecfdf3;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-full);
+  color: #047857;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.consumerIntro {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-base);
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.consumerCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--primary-600);
+  color: white;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  transition: all var(--transition);
+}
+
+.consumerCta:hover {
+  background: var(--primary-700);
+  transform: translateY(-1px);
+}
+
+.consumerChecklist {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.consumerStepCard {
+  padding: var(--space-5);
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.consumerStepNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--space-3);
+  border-radius: 50%;
+  background: var(--primary-600);
+  color: white;
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+
+.consumerStepCard p {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.reportingPanel {
+  padding: var(--space-7);
+  background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+  border: 1px solid #fdba74;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.reportingHeader {
+  margin-bottom: var(--space-6);
+}
+
+.reportingHeader h3 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xl);
+  color: var(--text-primary);
+}
+
+.reportingHeader p {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.reportingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.reportingCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--bg-primary);
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius-lg);
+}
+
+.reportingCard h4 {
+  margin: 0;
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+}
+
+.reportingCard p {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.reportingCard small {
+  font-size: var(--text-xs);
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.reportingLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: var(--space-3) var(--space-4);
+  background: #c2410c;
+  color: white;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  transition: all var(--transition);
+}
+
+.reportingLink:hover {
+  background: #9a3412;
+  transform: translateY(-1px);
+}
+
+.reportingDisclaimer {
+  margin: var(--space-6) 0 0;
+  font-size: var(--text-xs);
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .consumerChecklist,
+  .reportingGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* 🎯 受眾區 */

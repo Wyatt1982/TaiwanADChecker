@@ -59,15 +59,16 @@ export function KolRegistrationModal({ isOpen, onClose, onSubmit, onSkip }: Prop
     if (!isOpen) return null
 
     return (
-        <div className={styles.overlay}>
-            <div className={styles.modal}>
+        <div className={styles.overlay} onClick={onClose}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.header}>
                     <div className={styles.headerIcon}>👋</div>
-                    <h2 className={styles.title}>歡迎！先讓我們認識你</h2>
+                    <h2 className={styles.title}>如果你是創作者，可順手留下合作資料</h2>
                     <p className={styles.subtitle}>
-                        填寫資料後，品牌廠商可能會主動聯繫你合作喔！
+                        想直接檢查廣告風險也沒問題。KOL / 創作者填寫後，
+                        品牌廠商未來可能會主動聯繫你合作；
                         <br />
-                        <span className={styles.optional}>（可選填，隨時可跳過）</span>
+                        <span className={styles.optional}>消費者或一般使用者可直接跳過，功能不受影響。</span>
                     </p>
                 </div>
 
@@ -197,10 +198,10 @@ export function KolRegistrationModal({ isOpen, onClose, onSubmit, onSkip }: Prop
                     {/* 按鈕 */}
                     <div className={styles.actions}>
                         <button type="button" className={styles.skipButton} onClick={handleSkip}>
-                            先跳過，直接審核 →
+                            先直接使用工具 →
                         </button>
                         <button type="submit" className={styles.submitButton}>
-                            ✓ 儲存並開始審核
+                            ✓ 儲存創作者資料
                         </button>
                     </div>
                 </form>

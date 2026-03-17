@@ -1,10 +1,26 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
 import { SponsorSection } from '@/components/SponsorSection'
 import { ArticlesSection } from '@/components/ArticlesSection'
+import { consumerEvidenceChecklist, reportingDisclaimer, reportingResources } from '@/data/reporting'
+import { reviewModeConfigs, reviewModeOrder } from '@/data/reviewModes'
 import styles from './page.module.css'
 
 export default function HomePage() {
+  const modeHighlights = {
+    business: [
+      '發布前先檢查危險句、療效暗示與誇大用語',
+      '拿到法規依據、修改建議與較安全的改寫版本',
+      '適合品牌小編、KOL、美業、電商與客服團隊',
+    ],
+    consumer: [
+      '辨識可疑廣告是否有誇大、保證有效或療效暗示',
+      '看到白話風險說明與該保留哪些證據',
+      '快速連到 1950、食藥署與公平會等官方管道',
+    ],
+  } as const
+
   return (
     <>
       <Navbar />
@@ -14,34 +30,70 @@ export default function HomePage() {
         <section className={styles.hero}>
           <div className={styles.heroContent}>
             <div className={styles.badge}>
-              ⚠️ 2024 年社群廣告違規案件成長 23%
+              創作者、商家、消費者都能用
             </div>
             <h1 className={styles.title}>
-              一則私訊，
-              <span className={styles.titleGradient}>罰款 4 萬起跳</span>
+              先看懂這則廣告
+              <span className={styles.titleGradient}>有沒有貓膩</span>
             </h1>
             <p className={styles.subtitle}>
-              LINE 回個案例照片、IG 傳個見證圖，
+              貼上商品頁、社群貼文、私訊回覆或客服話術，
               <br />
-              <strong>截圖一秒，罰單跟著來。</strong>
+              <strong>AI 幫你判斷能不能發，也幫你判斷該不該買。</strong>
             </p>
             <div className={styles.heroActions}>
-              <Link href="/review" className={styles.ctaBtn}>
-                🔍 馬上檢查你的文案
+              <Link href="/review?mode=business" className={styles.ctaBtn}>
+                {reviewModeConfigs.business.icon} {reviewModeConfigs.business.ctaLabel}
+              </Link>
+              <Link href="/review?mode=consumer" className={styles.secondaryBtn}>
+                {reviewModeConfigs.consumer.icon} {reviewModeConfigs.consumer.ctaLabel}
               </Link>
               <Link href="/cases" className={styles.secondaryBtn}>
                 看真實開罰案例
               </Link>
             </div>
             <p className={styles.heroHint}>
-              ✓ 完全免費 ✓ 3 秒出結果 ✓ 不用登入就能用
+              ✓ 先選經營者或消費者模式 ✓ 3 秒出結果 ✓ 不用登入就能用
             </p>
           </div>
 
           <div className={styles.heroImage}>
-            <img src="/images/hero.png" alt="AI 快審通 ADCheck.ai - AI 廣告法規審核" />
+            <Image
+              src="/images/hero.png"
+              alt="AI 快審通 ADCheck.ai - AI 廣告法規審核"
+              fill
+              sizes="(max-width: 900px) 0px, (max-width: 1200px) 300px, 380px"
+              className={styles.heroImageAsset}
+              priority
+            />
           </div>
           <div className={styles.heroGlow}></div>
+        </section>
+
+        <section className={styles.dualSection}>
+          <div className={styles.container}>
+            <h2 className={styles.sectionTitle}>先選你現在要解決的情境</h2>
+            <div className={styles.dualGrid}>
+              {reviewModeOrder.map((mode) => {
+                const config = reviewModeConfigs[mode]
+                return (
+                  <article key={mode} className={styles.dualCard}>
+                    <div className={styles.dualIcon}>{config.icon}</div>
+                    <h3>{config.label}</h3>
+                    <p>{config.homeDescription}</p>
+                    <ul className={styles.dualList}>
+                      {modeHighlights[mode].map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                    <Link href={`/review?mode=${mode}`} className={styles.dualBtn}>
+                      {config.ctaLabel}
+                    </Link>
+                  </article>
+                )
+              })}
+            </div>
+          </div>
         </section>
 
         {/* 🔥 恐懼橫幅 - 強調痛點 */}
@@ -50,8 +102,8 @@ export default function HomePage() {
             <div className={styles.fearContent}>
               <span className={styles.fearIcon}>🚨</span>
               <div className={styles.fearText}>
-                <h2>你以為私訊很安全？</h2>
-                <p>同業釣魚、職業檢舉人、不滿意的客戶... 隨時都在截圖等著檢舉你</p>
+                <h2>你以為只是廣告話術？</h2>
+                <p>發的人可能吃罰單，買的人也可能被誤導下單；先查一下，往往比事後補救更省。</p>
               </div>
             </div>
           </div>
@@ -60,31 +112,31 @@ export default function HomePage() {
         {/* 💀 真實案例恐懼區 */}
         <section className={styles.horrorSection}>
           <div className={styles.container}>
-            <h2 className={styles.horrorTitle}>這些都是真實發生的事...</h2>
+            <h2 className={styles.horrorTitle}>這些情境，創作者和消費者都很常遇到</h2>
             <div className={styles.horrorGrid}>
               <div className={styles.horrorCard}>
                 <span className={styles.horrorEmoji}>😰</span>
-                <p>「客人私訊問效果，我傳了一張對比圖...」</p>
-                <span className={styles.horrorResult}>罰款 4 萬</span>
+                <p>「客服私訊傳 before / after 圖，還說效果很快看得見...」</p>
+                <span className={styles.horrorResult}>高風險話術</span>
               </div>
               <div className={styles.horrorCard}>
                 <span className={styles.horrorEmoji}>😱</span>
-                <p>「IG 限動分享吃了保健品很有精神...」</p>
-                <span className={styles.horrorResult}>罰款 20 萬</span>
+                <p>「商品頁寫『七天見效』『保證有效』，看起來很心動...」</p>
+                <span className={styles.horrorResult}>可能誇大不實</span>
               </div>
               <div className={styles.horrorCard}>
                 <span className={styles.horrorEmoji}>💸</span>
-                <p>「寫了『一次見效』被當成誇大不實...」</p>
-                <span className={styles.horrorResult}>罰款 60 萬</span>
+                <p>「KOL 限動說『改善睡眠』『調理體質』，到底能不能信？」</p>
+                <span className={styles.horrorResult}>先查再決定</span>
               </div>
               <div className={styles.horrorCard}>
                 <span className={styles.horrorEmoji}>😭</span>
-                <p>「回覆『可以改善睡眠問題』給客戶...」</p>
-                <span className={styles.horrorResult}>罰款 8 萬</span>
+                <p>「賣場回覆『不用運動也能瘦』，到底是話術還是違規？」</p>
+                <span className={styles.horrorResult}>別急著下單</span>
               </div>
             </div>
             <p className={styles.horrorNote}>
-              以上都是 2024-2025 年真實開罰案例
+              看到可疑句子時，最安全的做法是先檢查、先留證據，再決定下一步
             </p>
           </div>
         </section>
@@ -95,19 +147,19 @@ export default function HomePage() {
             <div className={styles.statsGrid}>
               <div className={styles.statCard}>
                 <span className={styles.statNumber}>4~400萬</span>
-                <span className={styles.statLabel}>保健食品罰款範圍</span>
+                <span className={styles.statLabel}>常見食安法罰鍰範圍</span>
               </div>
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>60%</span>
-                <span className={styles.statLabel}>違規來自社群貼文</span>
+                <span className={styles.statNumber}>1950</span>
+                <span className={styles.statLabel}>消費爭議可先諮詢</span>
               </div>
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>+23%</span>
-                <span className={styles.statLabel}>2024 年違規案件成長</span>
+                <span className={styles.statNumber}>1919</span>
+                <span className={styles.statLabel}>食品安全疑義可反映</span>
               </div>
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>私訊</span>
-                <span className={styles.statLabel}>也算廣告內容</span>
+                <span className={styles.statNumber}>私訊 / 商品頁</span>
+                <span className={styles.statLabel}>都可能成為判斷內容</span>
               </div>
             </div>
           </div>
@@ -116,35 +168,35 @@ export default function HomePage() {
         {/* ⚠️ 高風險行為清單 */}
         <section className={styles.riskSection}>
           <div className={styles.container}>
-            <h2 className={styles.sectionTitle}>你是不是也做過這些事？</h2>
+            <h2 className={styles.sectionTitle}>這些字眼，不論你是寫的人還是看到的人都要小心</h2>
             <div className={styles.riskGrid}>
               <div className={styles.riskItem}>
                 <span className={styles.riskCheck}>❌</span>
-                <p>私訊傳送使用前後對比圖</p>
+                <p>七天見效、立即有感、保證有效</p>
               </div>
               <div className={styles.riskItem}>
                 <span className={styles.riskCheck}>❌</span>
-                <p>說「吃了很有效」「皮膚變好了」</p>
+                <p>不用運動也能瘦、吃了就會好</p>
               </div>
               <div className={styles.riskItem}>
                 <span className={styles.riskCheck}>❌</span>
-                <p>分享客戶「見證」「體驗心得」</p>
+                <p>治療、根治、改善疾病、逆轉老化</p>
               </div>
               <div className={styles.riskItem}>
                 <span className={styles.riskCheck}>❌</span>
-                <p>用「改善」「治療」「根治」等字眼</p>
+                <p>100% 無害、絕不過敏、完全沒有副作用</p>
               </div>
               <div className={styles.riskItem}>
                 <span className={styles.riskCheck}>❌</span>
-                <p>回覆陌生詢問時提供案例照片</p>
+                <p>醫師都在用、比藥還有效、取代治療</p>
               </div>
               <div className={styles.riskItem}>
                 <span className={styles.riskCheck}>❌</span>
-                <p>宣稱「一次見效」「保證有感」</p>
+                <p>見證對比圖加上保證結果</p>
               </div>
             </div>
             <p className={styles.riskWarning}>
-              👆 每一項都可能讓你收到 4 萬起跳的罰單
+              👆 寫到這些字眼容易踩法規，看到這些字眼也別急著相信
             </p>
           </div>
         </section>
@@ -152,29 +204,80 @@ export default function HomePage() {
         {/* 🛡️ 解決方案區 */}
         <section className={styles.solutionSection}>
           <div className={styles.container}>
-            <h2 className={styles.sectionTitle}>3 秒知道文案有沒有問題</h2>
+            <h2 className={styles.sectionTitle}>3 步判斷這段內容能不能發、能不能信</h2>
             <div className={styles.stepGrid}>
               <div className={styles.stepCard}>
                 <div className={styles.stepNumber}>01</div>
-                <h3>貼上你的文案</h3>
-                <p>私訊內容、貼文文案、回覆話術都可以</p>
+                <h3>貼上你要檢查的內容</h3>
+                <p>商品頁、貼文、私訊回覆、客服話術都可以</p>
               </div>
               <div className={styles.stepCard}>
                 <div className={styles.stepNumber}>02</div>
                 <h3>AI 自動檢測</h3>
-                <p>比對食安法、藥事法、化妝品法規</p>
+                <p>比對食安法、藥事法、化妝品與公平交易法規重點</p>
               </div>
               <div className={styles.stepCard}>
                 <div className={styles.stepNumber}>03</div>
-                <h3>取得安全版本</h3>
-                <p>告訴你哪裡有風險、怎麼改才安全</p>
+                <h3>拿到下一步建議</h3>
+                <p>創作者看修正方向，消費者看是否先停買與如何申訴</p>
               </div>
             </div>
             <div className={styles.solutionCta}>
-              <Link href="/review" className={styles.ctaBtnLarge}>
-                免費檢查我的文案 →
+              <Link href="/review?mode=business" className={styles.ctaBtnLarge}>
+                先用經營者模式送審 →
               </Link>
-              <span className={styles.ctaSubtext}>不用註冊、不用登入、不收費</span>
+              <span className={styles.ctaSubtext}>消費者模式也可直接切換，不用註冊、不用登入、不收費</span>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.consumerSection}>
+          <div className={styles.container}>
+            <div className={styles.consumerHeader}>
+              <span className={styles.consumerBadge}>消費者也適用</span>
+              <h2 className={styles.sectionTitle}>看到可疑廣告，先做這 3 件事</h2>
+              <p className={styles.consumerIntro}>
+                如果你不是發文者，而是擔心自己被誇大宣稱誤導，這個工具可以幫你先判斷，再把你導到正確的官方管道。
+              </p>
+              <Link href="/review?mode=consumer" className={styles.consumerCta}>
+                我是消費者，先檢查這則廣告 →
+              </Link>
+            </div>
+
+            <div className={styles.consumerChecklist}>
+              {consumerEvidenceChecklist.map((item, index) => (
+                <div key={item} className={styles.consumerStepCard}>
+                  <span className={styles.consumerStepNumber}>0{index + 1}</span>
+                  <p>{item}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.reportingPanel}>
+              <div className={styles.reportingHeader}>
+                <h3>官方申訴 / 檢舉資源</h3>
+                <p>先分清楚你遇到的是「購買糾紛」還是「可疑廣告」，必要時兩邊都可以處理。</p>
+              </div>
+
+              <div className={styles.reportingGrid}>
+                {reportingResources.map((resource) => (
+                  <article key={resource.title} className={styles.reportingCard}>
+                    <h4>{resource.title}</h4>
+                    <p>{resource.description}</p>
+                    <a
+                      href={resource.href}
+                      className={styles.reportingLink}
+                      target={resource.href.startsWith('http') ? '_blank' : undefined}
+                      rel={resource.href.startsWith('http') ? 'noreferrer' : undefined}
+                    >
+                      {resource.actionLabel}
+                    </a>
+                    <small>{resource.helper}</small>
+                  </article>
+                ))}
+              </div>
+
+              <p className={styles.reportingDisclaimer}>{reportingDisclaimer}</p>
             </div>
           </div>
         </section>
@@ -185,28 +288,34 @@ export default function HomePage() {
             <h2 className={styles.sectionTitle}>誰需要這個工具？</h2>
             <div className={styles.audienceGrid}>
               <div className={styles.audienceCard}>
-                <span className={styles.audienceIcon}>💆‍♀️</span>
-                <h3>美業工作者</h3>
-                <p>美容師、美甲師、美睫師、美體師</p>
-                <small>私訊回覆客戶時最容易踩雷</small>
-              </div>
-              <div className={styles.audienceCard}>
-                <span className={styles.audienceIcon}>🔮</span>
-                <h3>身心靈產業</h3>
-                <p>能量療癒、芳療師、頌缽音療</p>
-                <small>「療癒」「改善」超容易被罰</small>
-              </div>
-              <div className={styles.audienceCard}>
-                <span className={styles.audienceIcon}>💊</span>
-                <h3>保健品銷售</h3>
-                <p>直銷、電商、團購主</p>
-                <small>產品推薦文案高風險群</small>
+                <span className={styles.audienceIcon}>🛍️</span>
+                <h3>一般消費者</h3>
+                <p>看到可疑商品頁、社群廣告、團購貼文</p>
+                <small>先判斷再下單，也知道怎麼申訴</small>
               </div>
               <div className={styles.audienceCard}>
                 <span className={styles.audienceIcon}>📱</span>
                 <h3>KOL / 創作者</h3>
-                <p>接業配、推廣合作</p>
-                <small>品牌給的文案不一定合規</small>
+                <p>接業配、做團購、分享開箱心得</p>
+                <small>品牌給的文案不一定真的合規</small>
+              </div>
+              <div className={styles.audienceCard}>
+                <span className={styles.audienceIcon}>💆‍♀️</span>
+                <h3>美業工作者</h3>
+                <p>美容師、美甲師、美睫師、美體師</p>
+                <small>私訊回覆和案例分享最容易踩雷</small>
+              </div>
+              <div className={styles.audienceCard}>
+                <span className={styles.audienceIcon}>💊</span>
+                <h3>保健品銷售</h3>
+                <p>直銷、電商、團購主、賣場經營者</p>
+                <small>療效宣稱與誇大效果是高風險區</small>
+              </div>
+              <div className={styles.audienceCard}>
+                <span className={styles.audienceIcon}>🏪</span>
+                <h3>品牌 / 電商團隊</h3>
+                <p>商品頁、客服腳本、投廣素材</p>
+                <small>降低內部出稿與客訴風險</small>
               </div>
             </div>
           </div>
@@ -217,9 +326,9 @@ export default function HomePage() {
           <div className={styles.container}>
             <div className={styles.quoteCard}>
               <p className={styles.quoteText}>
-                「我只是回個 LINE 分享效果，怎麼知道會被罰 4 萬...」
+                「看到『保證瘦』『立即見效』，至少我知道先查一下，不會衝動下單。」
               </p>
-              <span className={styles.quoteAuthor}>— 某美業工作者</span>
+              <span className={styles.quoteAuthor}>— 某位曾經差點踩雷的消費者</span>
             </div>
           </div>
         </section>
@@ -265,7 +374,7 @@ export default function HomePage() {
               <span className={styles.comingSoonBadge}>🚀 即將推出</span>
               <h2 className={styles.sectionTitle}>更強大的審核能力</h2>
               <p className={styles.comingSoonDesc}>
-                我們正在開發更多功能，讓你的每一則內容都能安心發布
+                我們正在開發更多功能，讓你在發布前、下單前都能更快判斷風險
               </p>
             </div>
             <div className={styles.comingSoonGrid}>
@@ -280,7 +389,7 @@ export default function HomePage() {
                 <ul className={styles.comingSoonFeatures}>
                   <li>📱 支援 IG 限動、貼文截圖</li>
                   <li>🖼️ 產品海報、DM 圖片</li>
-                  <li>⚡ 秒速辨識圖中文字</li>
+                  <li>⚡ 消費者也能直接貼截圖來查</li>
                 </ul>
                 <span className={styles.comingSoonEta}>預計上線：2026 Q2</span>
               </div>
@@ -303,12 +412,12 @@ export default function HomePage() {
                 <h3>合規報告下載</h3>
                 <p>
                   生成專業審核報告 PDF，
-                  作為品牌合作的合規證明，保護自己的同時展現專業。
+                  作為內部審核紀錄、品牌合作證明，或消費申訴時的整理摘要。
                 </p>
                 <ul className={styles.comingSoonFeatures}>
                   <li>📋 專業審核報告</li>
-                  <li>✅ 合規通過證明</li>
-                  <li>📤 一鍵分享給品牌</li>
+                  <li>✅ 合規重點與風險摘要</li>
+                  <li>📤 一鍵分享給品牌或家人朋友</li>
                 </ul>
                 <span className={styles.comingSoonEta}>預計上線：2026 Q2</span>
               </div>
@@ -329,7 +438,7 @@ export default function HomePage() {
             <div className={styles.trustGrid}>
               <div className={styles.trustCard}>
                 <span className={styles.trustNumber}>3,200+</span>
-                <span className={styles.trustLabel}>篇文案已審核</span>
+                <span className={styles.trustLabel}>段內容已檢查</span>
                 <p className={styles.trustDesc}>持續增加中</p>
               </div>
               <div className={styles.trustCard}>
@@ -338,9 +447,9 @@ export default function HomePage() {
                 <p className={styles.trustDesc}>保護每一位用戶</p>
               </div>
               <div className={styles.trustCard}>
-                <span className={styles.trustNumber}>500+</span>
-                <span className={styles.trustLabel}>位 KOL 信任使用</span>
-                <p className={styles.trustDesc}>美業、保健品、身心靈</p>
+                <span className={styles.trustNumber}>多角色</span>
+                <span className={styles.trustLabel}>創作者、商家、消費者都能用</span>
+                <p className={styles.trustDesc}>發文前檢查、下單前判讀</p>
               </div>
               <div className={styles.trustCard}>
                 <span className={styles.trustNumber}>3 秒</span>
@@ -397,17 +506,17 @@ export default function HomePage() {
                   可以審核哪些類型的內容？
                 </summary>
                 <p className={styles.faqAnswer}>
-                  目前支援：保健食品、化妝品、醫美廣告、食品、酒類等。
-                  未來將擴充更多產業別。
+                  目前支援：商品頁文案、社群貼文、私訊回覆、客服話術、業配腳本等。
+                  產品面向涵蓋保健食品、化妝品、醫美、一般食品、酒類、藥品等。
                 </p>
               </details>
               <details className={styles.faqItem}>
                 <summary className={styles.faqQuestion}>
-                  跟「快合規」有什麼不同？
+                  消費者也適合使用嗎？
                 </summary>
                 <p className={styles.faqAnswer}>
-                  我們專為 KOL、美業、個人創作者設計，強調「免費、快速、輕量」。
-                  快合規偏向企業級解決方案，適合大型品牌。
+                  可以。你可以把看到的廣告、商品頁、賣場客服話術貼進來，
+                  先判斷有沒有誇大、療效暗示或高風險宣稱，再依頁面提供的官方連結決定是否申訴或檢舉。
                 </p>
               </details>
             </div>
@@ -424,16 +533,16 @@ export default function HomePage() {
         <section className={styles.finalCta}>
           <div className={styles.container}>
             <h2 className={styles.finalCtaTitle}>
-              一張對比圖，可能讓你賠掉半年營收
+              先判斷有沒有誇大，再決定要不要發、要不要買
             </h2>
             <p className={styles.finalCtaDesc}>
-              花 3 秒檢查，省下 4 萬以上的罰款
+              花 3 秒檢查，少踩一次罰單，也少踩一次衝動下單
             </p>
-            <Link href="/review" className={styles.ctaBtnLarge}>
-              🔍 立即免費檢查文案
+            <Link href="/review?mode=business" className={styles.ctaBtnLarge}>
+              🔍 前往送審 / 風險辨識頁
             </Link>
             <p className={styles.finalCtaNote}>
-              已經有 <strong>1,200+</strong> 位美業人使用過
+              創作者、商家與消費者都適用
             </p>
           </div>
         </section>
@@ -443,7 +552,7 @@ export default function HomePage() {
           <div className={styles.container}>
             <p className={styles.disclaimer}>
               ⚖️ 免責聲明：AI 快審通提供之建議僅供參考，不具法律效力。
-              最終文案發布請參照政府公告之正式法規。
+              最終發布、購買、申訴或檢舉前，仍請以政府公告與主管機關說明為準。
               本服務為獨立開發之 AI 工具，與任何政府機關或第三方合規平台無關。
             </p>
             <p>© 2026 AI 快審通 ADCheck.ai. All rights reserved.</p>

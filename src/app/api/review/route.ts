@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ContentType, RiskLevel } from '@prisma/client'
 import { analyzeContent, getAvailableProvider, type ProductType } from '@/services/analyzer'
+import { parseReviewAudienceMode } from '@/data/reviewModes'
 import { isMockAuthEnabled } from '@/lib/mockAuth'
 import { checkRateLimit, DEFAULT_RATE_LIMIT, API_RATE_LIMIT } from '@/lib/rateLimit'
 import { createReview, markReviewFailed, saveReviewResult } from '@/services/db/reviews'
@@ -127,7 +128,8 @@ export async function POST(request: NextRequest) {
 
     try {
         const body = await request.json()
-        const { content, productType, contentType } = body
+        const { content, productType, contentType, audienceMode } = body
+        const parsedAudienceMode = parseReviewAudienceMode(audienceMode)
 
         // 驗證必要欄位
         if (!content || typeof content !== 'string') {
@@ -160,7 +162,12 @@ export async function POST(request: NextRequest) {
             console.error('[Review API] Failed to create review log:', dbError)
         }
 
-        const result = await analyzeContent(content, productType as ProductType)
+        const result = await analyzeContent(
+            content,
+            productType as ProductType,
+            undefined,
+            parsedAudienceMode
+        )
 
         const processingTime = Date.now() - startTime
 
@@ -185,6 +192,7 @@ export async function POST(request: NextRequest) {
             ...result,
             processingTime,
             contentType,
+            audienceMode: parsedAudienceMode,
             analyzedAt: new Date().toISOString(),
             // 回傳使用量資訊
             usage: {

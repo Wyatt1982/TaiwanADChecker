@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { ReviewForm } from '@/components/review/ReviewForm'
 import { ReviewResult } from '@/components/review/ReviewResult'
 import { KolRegistrationModal } from '@/components/KolRegistrationModal'
 import { getServiceStatus, isLLMAvailable, ServiceStatus } from '@/data/serviceStatus'
+import { parseReviewAudienceMode, reviewModeConfigs, type ReviewAudienceMode } from '@/data/reviewModes'
 import { getUsageStatus, canUseReview, recordUsage } from '@/data/usageLimit'
 import { isMockAuthEnabled } from '@/lib/mockAuth'
 import styles from './page.module.css'
@@ -29,24 +31,39 @@ interface ReviewData {
     revisedContent: string
     processingTime: number
     provider?: 'openai' | 'anthropic' | 'gemini' | 'mock'
+    audienceMode?: ReviewAudienceMode
 }
 
 export default function ReviewPage() {
     const mockAuthEnabled = isMockAuthEnabled()
+    const pathname = usePathname()
+    const router = useRouter()
+    const searchParams = useSearchParams()
     const [loading, setLoading] = useState(false)
     const [result, setResult] = useState<ReviewData | null>(null)
     const [error, setError] = useState<string | null>(null)
+    const [audienceMode, setAudienceMode] = useState<ReviewAudienceMode>('business')
     const [showKolModal, setShowKolModal] = useState(false)
     const [serviceStatus, setServiceStatus] = useState<ServiceStatus | null>(null)
     const [isServiceAvailable, setIsServiceAvailable] = useState(true)
     const [usageStatus, setUsageStatus] = useState({ used: 0, limit: 1, remaining: 1, isLoggedIn: false })
+    const modeConfig = reviewModeConfigs[audienceMode]
 
     // 檢查是否需要顯示 KOL 註冊表單
     useEffect(() => {
+        const savedMode = localStorage.getItem('review-audience-mode')
+        const queryMode = searchParams.get('mode')
+        const initialMode = queryMode
+            ? parseReviewAudienceMode(queryMode)
+            : parseReviewAudienceMode(savedMode)
+        setAudienceMode(initialMode)
+
         const registered = localStorage.getItem('kol-registered')
         const skipped = localStorage.getItem('kol-skipped')
-        if (!registered && !skipped) {
+        if (initialMode === 'business' && !registered && !skipped) {
             setShowKolModal(true)
+        } else {
+            setShowKolModal(false)
         }
 
         // 檢查服務狀態
@@ -63,12 +80,33 @@ export default function ReviewPage() {
         }
         window.addEventListener('auth-change', handleAuthChange)
         return () => window.removeEventListener('auth-change', handleAuthChange)
-    }, [])
+    }, [searchParams])
+
+    useEffect(() => {
+        localStorage.setItem('review-audience-mode', audienceMode)
+
+        const params = new URLSearchParams(searchParams.toString())
+        if (params.get('mode') !== audienceMode) {
+            params.set('mode', audienceMode)
+            router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+        }
+
+        if (audienceMode === 'consumer') {
+            setShowKolModal(false)
+        }
+    }, [audienceMode, pathname, router, searchParams])
+
+    const handleModeChange = (nextMode: ReviewAudienceMode) => {
+        setAudienceMode(nextMode)
+        setResult(null)
+        setError(null)
+    }
 
     const handleSubmit = async (data: {
         content: string
         productType: string
         contentType: string
+        audienceMode: ReviewAudienceMode
     }) => {
         // 檢查使用限制
         if (!canUseReview()) {
@@ -148,19 +186,21 @@ export default function ReviewPage() {
             <Navbar />
 
             {/* KOL 註冊表單 */}
-            <KolRegistrationModal
-                isOpen={showKolModal}
-                onClose={() => setShowKolModal(false)}
-                onSubmit={handleKolSubmit}
-                onSkip={handleKolSkip}
-            />
+            {audienceMode === 'business' && (
+                <KolRegistrationModal
+                    isOpen={showKolModal}
+                    onClose={() => setShowKolModal(false)}
+                    onSubmit={handleKolSubmit}
+                    onSkip={handleKolSkip}
+                />
+            )}
 
             <main className={styles.main}>
                 <div className={styles.container}>
                     <div className={styles.header}>
-                        <h1 className={styles.title}>文案審核</h1>
+                        <h1 className={styles.title}>{modeConfig.pageTitle}</h1>
                         <p className={styles.subtitle}>
-                            貼上您的廣告文案，AI 將分析法規風險並提供修改建議
+                            {modeConfig.pageSubtitle}
                         </p>
 
                         {/* 使用量顯示 */}
@@ -190,7 +230,12 @@ export default function ReviewPage() {
                     <div className={styles.content}>
                         <div className={styles.formSection}>
                             <div className={styles.card}>
-                                <ReviewForm onSubmit={handleSubmit} loading={loading} />
+                                <ReviewForm
+                                    mode={audienceMode}
+                                    onModeChange={handleModeChange}
+                                    onSubmit={handleSubmit}
+                                    loading={loading}
+                                />
                             </div>
                         </div>
 
@@ -198,9 +243,9 @@ export default function ReviewPage() {
                             {loading && (
                                 <div className={styles.loadingState}>
                                     <div className={styles.spinner}></div>
-                                    <p>AI 正在分析您的文案...</p>
+                                    <p>{modeConfig.loadingTitle}</p>
                                     <p className={styles.loadingHint}>
-                                        正在比對法規知識庫與開罰案例
+                                        {modeConfig.loadingHint}
                                     </p>
                                 </div>
                             )}
@@ -220,6 +265,7 @@ export default function ReviewPage() {
 
                             {result && !loading && (
                                 <ReviewResult
+                                    mode={result.audienceMode ?? audienceMode}
                                     riskLevel={result.riskLevel}
                                     riskScore={result.riskScore}
                                     issues={result.issues}
@@ -233,12 +279,8 @@ export default function ReviewPage() {
                             {!result && !loading && !error && (
                                 <div className={styles.emptyState}>
                                     <span className={styles.emptyIcon}>📝</span>
-                                    <h3>準備好開始了嗎？</h3>
-                                    <p>
-                                        在左側輸入您的廣告文案，
-                                        <br />
-                                        系統將即時分析法規風險
-                                    </p>
+                                    <h3>{modeConfig.emptyTitle}</h3>
+                                    <p>{modeConfig.emptyDescription}</p>
                                 </div>
                             )}
                         </div>

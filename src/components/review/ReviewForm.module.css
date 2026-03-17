@@ -99,6 +99,59 @@
     color: var(--text-primary);
 }
 
+.modeGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+
+.modeBtn {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.modeBtn:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent-300);
+}
+
+.modeBtnActive {
+    background: var(--accent-50);
+    border-color: var(--accent-500);
+    box-shadow: 0 0 0 1px rgba(199, 67, 50, 0.12);
+}
+
+.modeIcon {
+    font-size: var(--text-2xl);
+    line-height: 1;
+}
+
+.modeMeta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.modeTitle {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.modeDesc {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
 /* 產品類別網格 */
 .productGrid {
     display: grid;
@@ -213,6 +266,10 @@
 }
 
 @media (max-width: 640px) {
+    .modeGrid {
+        grid-template-columns: 1fr;
+    }
+
     .productGrid {
         grid-template-columns: repeat(3, 1fr);
     }

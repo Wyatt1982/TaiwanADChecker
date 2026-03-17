@@ -3,6 +3,11 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Input'
+import {
+    reviewModeConfigs,
+    reviewModeOrder,
+    type ReviewAudienceMode,
+} from '@/data/reviewModes'
 import styles from './ReviewForm.module.css'
 
 type ProductType =
@@ -24,7 +29,6 @@ type ContentType =
     | 'ARTICLE'
     | 'AD_COPY'
 
-// 產品類別定義（含審核說明）
 const productTypes: { value: ProductType; label: string; icon: string; description: string }[] = [
     {
         value: 'AUTO',
@@ -82,44 +86,77 @@ const productTypes: { value: ProductType; label: string; icon: string; descripti
     },
 ]
 
-// 內容類型定義（含審核重點說明）
 const contentTypes: { value: ContentType; label: string; description: string }[] = [
     { value: 'SCRIPT', label: '影片腳本', description: '審核口語化表達的違規詞' },
-    { value: 'POST', label: '社群貼文', description: '審核文字誇大宣稱' },
+    { value: 'POST', label: '社群貼文', description: '審核廣告貼文與團購話術' },
     { value: 'VIDEO_DESC', label: '影片描述', description: '審核摘要中的違規陳述' },
-    { value: 'STORY', label: '限時動態', description: '審核簡短文案的違規' },
-    { value: 'ARTICLE', label: '部落格文章', description: '審核長文中隱藏違規詞' },
-    { value: 'AD_COPY', label: '廣告文案', description: '審核促銷語合規性' },
+    { value: 'STORY', label: '限時動態', description: '審核簡短文案與促購字眼' },
+    { value: 'ARTICLE', label: '部落格文章', description: '審核長文導購與介紹內容' },
+    { value: 'AD_COPY', label: '商品頁 / 廣告', description: '審核商品頁與促銷語合規性' },
 ]
 
 interface ReviewFormProps {
+    mode: ReviewAudienceMode
+    onModeChange: (mode: ReviewAudienceMode) => void
     onSubmit?: (data: {
         content: string
         productType: ProductType
         contentType: ContentType
+        audienceMode: ReviewAudienceMode
     }) => void
     loading?: boolean
 }
 
-export function ReviewForm({ onSubmit, loading = false }: ReviewFormProps) {
+export function ReviewForm({ mode, onModeChange, onSubmit, loading = false }: ReviewFormProps) {
     const [content, setContent] = useState('')
-    const [productType, setProductType] = useState<ProductType>('AUTO')  // 預設自動偵測
+    const [productType, setProductType] = useState<ProductType>('AUTO')
     const [contentType, setContentType] = useState<ContentType>('POST')
     const [showProductHelp, setShowProductHelp] = useState(false)
     const [showContentHelp, setShowContentHelp] = useState(false)
 
+    const modeConfig = reviewModeConfigs[mode]
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (!content.trim()) return
-        onSubmit?.({ content, productType, contentType })
+        onSubmit?.({ content, productType, contentType, audienceMode: mode })
     }
 
-    const selectedProduct = productTypes.find(p => p.value === productType)
-    const selectedContent = contentTypes.find(c => c.value === contentType)
+    const selectedProduct = productTypes.find((product) => product.value === productType)
+    const selectedContent = contentTypes.find((contentOption) => contentOption.value === contentType)
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
-            {/* 產品類別選擇 */}
+            <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                    <label className={styles.sectionLabel}>使用模式</label>
+                </div>
+
+                <div className={styles.modeGrid}>
+                    {reviewModeOrder.map((modeOption) => {
+                        const option = reviewModeConfigs[modeOption]
+                        return (
+                            <button
+                                key={modeOption}
+                                type="button"
+                                className={`${styles.modeBtn} ${mode === modeOption ? styles.modeBtnActive : ''}`}
+                                onClick={() => onModeChange(modeOption)}
+                            >
+                                <span className={styles.modeIcon}>{option.icon}</span>
+                                <span className={styles.modeMeta}>
+                                    <span className={styles.modeTitle}>{option.label}</span>
+                                    <span className={styles.modeDesc}>{option.homeDescription}</span>
+                                </span>
+                            </button>
+                        )
+                    })}
+                </div>
+
+                <p className={styles.selectedHint}>
+                    {modeConfig.icon} {modeConfig.pageSubtitle}
+                </p>
+            </div>
+
             <div className={styles.section}>
                 <div className={styles.sectionHeader}>
                     <label className={styles.sectionLabel}>產品類別</label>
@@ -132,7 +169,6 @@ export function ReviewForm({ onSubmit, loading = false }: ReviewFormProps) {
                     </button>
                 </div>
 
-                {/* 當前選擇的說明 */}
                 {selectedProduct && (
                     <p className={styles.selectedHint}>
                         {selectedProduct.icon} {selectedProduct.description}
@@ -154,12 +190,11 @@ export function ReviewForm({ onSubmit, loading = false }: ReviewFormProps) {
                     ))}
                 </div>
 
-                {/* 展開的說明列表 */}
                 {showProductHelp && (
                     <div className={styles.helpPanel}>
                         <h4>各類別審核標準</h4>
                         <ul>
-                            {productTypes.filter(p => p.value !== 'AUTO').map((type) => (
+                            {productTypes.filter((type) => type.value !== 'AUTO').map((type) => (
                                 <li key={type.value}>
                                     <strong>{type.icon} {type.label}</strong>：{type.description}
                                 </li>
@@ -169,7 +204,6 @@ export function ReviewForm({ onSubmit, loading = false }: ReviewFormProps) {
                 )}
             </div>
 
-            {/* 內容類型選擇 */}
             <div className={styles.section}>
                 <div className={styles.sectionHeader}>
                     <label className={styles.sectionLabel}>內容類型</label>
@@ -182,7 +216,6 @@ export function ReviewForm({ onSubmit, loading = false }: ReviewFormProps) {
                     </button>
                 </div>
 
-                {/* 當前選擇的說明 */}
                 {selectedContent && (
                     <p className={styles.selectedHint}>
                         {selectedContent.description}
@@ -203,7 +236,6 @@ export function ReviewForm({ onSubmit, loading = false }: ReviewFormProps) {
                     ))}
                 </div>
 
-                {/* 展開的說明列表 */}
                 {showContentHelp && (
                     <div className={styles.helpPanel}>
                         <h4>各類型審核重點</h4>
@@ -218,29 +250,23 @@ export function ReviewForm({ onSubmit, loading = false }: ReviewFormProps) {
                 )}
             </div>
 
-            {/* 文案輸入 */}
             <div className={styles.section}>
                 <Textarea
-                    label="廣告文案內容"
-                    placeholder="請貼上您的廣告文案、腳本或業配內容...
-
-範例：
-這款膠原蛋白真的超有效！吃了一個月皮膚變得超水潤，細紋都不見了！強烈推薦給大家～"
+                    label={mode === 'business' ? '廣告文案內容' : '廣告內容或截圖文字'}
+                    placeholder={modeConfig.placeholder}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     rows={8}
-                    hint="支援純文字格式，建議貼上完整的廣告內容以獲得最準確的審核結果"
+                    hint={modeConfig.inputHint}
                 />
             </div>
 
-            {/* 字數統計 */}
             <div className={styles.stats}>
                 <span className={styles.statItem}>
                     字數：<strong>{content.length}</strong>
                 </span>
             </div>
 
-            {/* 提交按鈕 */}
             <Button
                 type="submit"
                 variant="primary"
@@ -249,7 +275,7 @@ export function ReviewForm({ onSubmit, loading = false }: ReviewFormProps) {
                 disabled={!content.trim() || loading}
                 className={styles.submitBtn}
             >
-                {loading ? '分析中...' : '🔍 開始審核'}
+                {loading ? '分析中...' : `🔍 ${modeConfig.submitLabel}`}
             </Button>
         </form>
     )
