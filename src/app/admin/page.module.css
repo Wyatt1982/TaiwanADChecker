@@ -27,6 +27,22 @@
     margin: 0;
 }
 
+.accessCard {
+    max-width: 640px;
+    margin: var(--space-12) auto 0;
+    padding: var(--space-8);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.accessText {
+    margin: var(--space-3) 0 0;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
 /* 統計卡片 */
 .statsGrid {
     display: grid;

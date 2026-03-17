@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { sponsorshipConfig, getRemainingDays, getProgressPercentage } from '@/data/sponsorship'
 import { ServiceStatus } from '@/data/serviceStatus'
 import { getSystemStatus, updateSystemStatusAction } from '@/app/actions/settings'
+import { isMockAuthEnabled } from '@/lib/mockAuth'
 import styles from './page.module.css'
 
 // 模擬數據
@@ -51,6 +52,7 @@ const feedbackTypeLabels: Record<string, { icon: string; label: string; color: s
 }
 
 export default function AdminPage() {
+    const mockAuthEnabled = isMockAuthEnabled()
     const [stats, setStats] = useState<DashboardStats>({
         totalReviews: 0,
         todayReviews: 0,
@@ -165,6 +167,27 @@ export default function AdminPage() {
 
     const costPerReview = calculateCostPerReview(selectedLlm)
     const monthlyCapacity = calculateMonthlyCapacity(selectedLlm, monthlyBudget)
+
+    if (!mockAuthEnabled) {
+        return (
+            <>
+                <Navbar />
+                <main className={styles.main}>
+                    <div className={styles.container}>
+                        <div className={styles.accessCard}>
+                            <h1 className={styles.title}>後台已停用</h1>
+                            <p className={styles.accessText}>
+                                正式環境目前未啟用安全的管理員登入，因此後台控制功能已暫時關閉。
+                            </p>
+                            <p className={styles.accessText}>
+                                等正式驗證機制完成後，再重新開放管理入口。
+                            </p>
+                        </div>
+                    </div>
+                </main>
+            </>
+        )
+    }
 
     return (
         <>

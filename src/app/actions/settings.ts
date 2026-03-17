@@ -1,6 +1,8 @@
 'use server'
 
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
+import { isMockAuthEnabled } from '@/lib/mockAuth'
 import { ServiceStatus, defaultServiceStatus, SERVICE_STATUS_KEY } from '@/data/serviceStatus'
 import { revalidatePath } from 'next/cache'
 
@@ -24,16 +26,22 @@ export async function getSystemStatus(): Promise<ServiceStatus> {
 }
 
 export async function updateSystemStatusAction(status: ServiceStatus): Promise<ServiceStatus> {
+    if (!isMockAuthEnabled()) {
+        throw new Error('Mock admin controls are disabled in this environment.')
+    }
+
+    const jsonStatus = JSON.parse(JSON.stringify(status)) as Prisma.InputJsonValue
+
     try {
         const updated = await prisma.systemSetting.upsert({
             where: { key: SERVICE_STATUS_KEY },
             update: {
-                value: status as any,
+                value: jsonStatus,
                 updatedAt: new Date()
             },
             create: {
                 key: SERVICE_STATUS_KEY,
-                value: status as any,
+                value: jsonStatus,
                 description: 'System Service Status Configuration'
             }
         })

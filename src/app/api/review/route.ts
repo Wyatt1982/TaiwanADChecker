@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { analyzeContent, getAvailableProvider, type ProductType } from '@/services/analyzer'
+import { isMockAuthEnabled } from '@/lib/mockAuth'
 import { checkRateLimit, DEFAULT_RATE_LIMIT, API_RATE_LIMIT } from '@/lib/rateLimit'
 
 // 從 request headers 取得 IP
@@ -21,6 +22,10 @@ function getClientIP(request: NextRequest): string {
 
 // 從 Authorization header 或 cookie 取得 userId
 function getUserId(request: NextRequest): string | null {
+    if (!isMockAuthEnabled()) {
+        return null
+    }
+
     // 檢查 Authorization header（Bearer token）
     const authHeader = request.headers.get('authorization')
     if (authHeader?.startsWith('Bearer ')) {
@@ -85,7 +90,7 @@ export async function POST(request: NextRequest) {
     if (!dailyLimit.allowed) {
         const message = isAuthenticated
             ? '今日審核次數已達上限（10 次），請明天再試。'
-            : '今日審核次數已達上限。登入會員可獲得每日 10 次的審核額度！'
+            : '今日審核次數已達上限，請明天再試。'
 
         return NextResponse.json(
             {

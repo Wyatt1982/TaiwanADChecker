@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getCurrentUser, logout, isAdmin, isLoggedIn } from '@/data/auth'
+import { getCurrentUser, logout } from '@/data/auth'
 import type { User } from '@/data/auth'
+import { isMockAuthEnabled } from '@/lib/mockAuth'
 import styles from './Navbar.module.css'
 
 export function Navbar() {
     const router = useRouter()
+    const mockAuthEnabled = isMockAuthEnabled()
     const [user, setUser] = useState<User | null>(null)
     const [showDropdown, setShowDropdown] = useState(false)
 
@@ -95,11 +97,11 @@ export function Navbar() {
                                 </div>
                             )}
                         </div>
-                    ) : (
+                    ) : mockAuthEnabled ? (
                         <Link href="/auth/login" className={styles.loginBtn}>
                             登入
                         </Link>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </nav>

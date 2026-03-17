@@ -8,6 +8,7 @@ import { ReviewResult } from '@/components/review/ReviewResult'
 import { KolRegistrationModal } from '@/components/KolRegistrationModal'
 import { getServiceStatus, isLLMAvailable, ServiceStatus } from '@/data/serviceStatus'
 import { getUsageStatus, canUseReview, recordUsage } from '@/data/usageLimit'
+import { isMockAuthEnabled } from '@/lib/mockAuth'
 import styles from './page.module.css'
 
 type RiskLevel = 'safe' | 'low' | 'medium' | 'high' | 'critical'
@@ -31,6 +32,7 @@ interface ReviewData {
 }
 
 export default function ReviewPage() {
+    const mockAuthEnabled = isMockAuthEnabled()
     const [loading, setLoading] = useState(false)
     const [result, setResult] = useState<ReviewData | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -72,7 +74,7 @@ export default function ReviewPage() {
         if (!canUseReview()) {
             setError(usageStatus.isLoggedIn
                 ? '今日審核次數已達上限（10 次），請明天再試。'
-                : '今日審核次數已達上限。登入會員可獲得每日 10 次的審核額度！')
+                : '今日審核次數已達上限，請明天再試。')
             return
         }
 
@@ -166,7 +168,7 @@ export default function ReviewPage() {
                             <span className={styles.usageLabel}>
                                 今日剩餘：{usageStatus.remaining}/{usageStatus.limit} 次
                             </span>
-                            {!usageStatus.isLoggedIn && (
+                            {!usageStatus.isLoggedIn && mockAuthEnabled && (
                                 <Link href="/auth/login" className={styles.upgradeLink}>
                                     登入獲得更多額度 →
                                 </Link>

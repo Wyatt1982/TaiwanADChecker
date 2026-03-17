@@ -10,6 +10,7 @@ import {
     PlanType,
 } from '@/data/downloadLimit'
 import { getCurrentUser } from '@/data/auth'
+import { isMockAuthEnabled } from '@/lib/mockAuth'
 import styles from './DownloadLimitBanner.module.css'
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function DownloadLimitBanner({ onDownload, showUpgradeOptions = false }: Props) {
+    const mockAuthEnabled = isMockAuthEnabled()
     const [status, setStatus] = useState<DownloadStatus | null>(null)
     const [showPlans, setShowPlans] = useState(false)
 
@@ -52,13 +54,19 @@ export function DownloadLimitBanner({ onDownload, showUpgradeOptions = false }: 
                 <div className={styles.content}>
                     <span className={styles.icon}>🔐</span>
                     <div className={styles.text}>
-                        <strong>登入以下載 KOL 資料</strong>
-                        <span>免費註冊廠商帳號，每月可下載 3 筆資料</span>
+                        <strong>{mockAuthEnabled ? '登入以下載 KOL 資料' : '會員功能暫時停用'}</strong>
+                        <span>
+                            {mockAuthEnabled
+                                ? '免費註冊廠商帳號，每月可下載 3 筆資料'
+                                : '正式環境已停用測試登入，KOL 名單下載功能將於正式會員系統完成後開放'}
+                        </span>
                     </div>
                 </div>
-                <Link href="/auth/login" className={styles.btn}>
-                    立即登入
-                </Link>
+                {mockAuthEnabled && (
+                    <Link href="/auth/login" className={styles.btn}>
+                        立即登入
+                    </Link>
+                )}
             </div>
         )
     }

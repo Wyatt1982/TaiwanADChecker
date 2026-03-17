@@ -1,3 +1,5 @@
+import { MOCK_AUTH_ENABLED } from '@/lib/mockAuth'
+
 // 用戶類型
 export interface User {
     id: string
@@ -43,52 +45,58 @@ export interface UserSession {
     expiresAt: string
 }
 
-// 模擬用戶資料
-export const mockUsers: { [key: string]: User & { password: string } } = {
-    'admin': {
-        id: '1',
-        name: '管理員',
-        email: 'admin@kol-helper.tw',
-        role: 'admin',
-        password: 'admin123',
-        createdAt: '2024-01-01',
-    },
-    'brand1': {
-        id: '2',
-        name: '美妝品牌行銷',
-        email: 'brand@example.com',
-        role: 'brand',
-        password: 'brand123',
-        createdAt: '2024-06-01',
-    },
-    'kol1': {
-        id: '3',
-        name: '小美美妝',
-        email: 'kol@example.com',
-        role: 'kol',
-        password: 'kol123',
-        createdAt: '2024-03-15',
-        kolProfile: {
-            displayName: '小美美妝',
-            bio: '專注彩妝與保養分享的創作者',
-            followers: 125000,
-            platforms: ['Instagram', 'YouTube'],
-            categories: ['美妝', '保養'],
-            privacy: {
-                showEmail: false,
-                showFollowerCount: true,
-                allowContactRequest: true,
-                showInDirectory: true,
+// 僅在本機開發明確啟用時才保留 mock 帳號，避免測試帳密進入正式環境
+export const mockUsers: { [key: string]: User & { password: string } } = MOCK_AUTH_ENABLED
+    ? {
+        'admin': {
+            id: '1',
+            name: '管理員',
+            email: 'admin@kol-helper.tw',
+            role: 'admin',
+            password: 'admin123',
+            createdAt: '2024-01-01',
+        },
+        'brand1': {
+            id: '2',
+            name: '美妝品牌行銷',
+            email: 'brand@example.com',
+            role: 'brand',
+            password: 'brand123',
+            createdAt: '2024-06-01',
+        },
+        'kol1': {
+            id: '3',
+            name: '小美美妝',
+            email: 'kol@example.com',
+            role: 'kol',
+            password: 'kol123',
+            createdAt: '2024-03-15',
+            kolProfile: {
+                displayName: '小美美妝',
+                bio: '專注彩妝與保養分享的創作者',
+                followers: 125000,
+                platforms: ['Instagram', 'YouTube'],
+                categories: ['美妝', '保養'],
+                privacy: {
+                    showEmail: false,
+                    showFollowerCount: true,
+                    allowContactRequest: true,
+                    showInDirectory: true,
+                },
             },
         },
-    },
-}
+    }
+    : {}
 
 const SESSION_KEY = 'user-session'
 const PRIVACY_KEY = 'kol-privacy-settings'
 
 // 登入
 export function login(username: string, password: string): UserSession | null {
+    if (!MOCK_AUTH_ENABLED) {
+        return null
+    }
+
     const userData = mockUsers[username]
     if (!userData || userData.password !== password) {
         return null
@@ -118,6 +126,11 @@ export function logout(): void {
 // 取得當前 Session
 export function getSession(): UserSession | null {
     if (typeof window === 'undefined') {
+        return null
+    }
+
+    if (!MOCK_AUTH_ENABLED) {
+        localStorage.removeItem(SESSION_KEY)
         return null
     }
 
