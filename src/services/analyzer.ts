@@ -18,6 +18,7 @@ export type ProductType =
     | 'FOOD'
     | 'ALCOHOL'
     | 'TOBACCO'
+    | 'MEDICINE'
     | 'OTHER'
 
 export type RiskLevel = 'safe' | 'low' | 'medium' | 'high' | 'critical'
@@ -50,6 +51,7 @@ const regulationContext: Record<ProductType, string> = {
 - 一般食品（含零食、飲料）
 - 酒類
 - 菸品
+- 藥品（含處方藥、成藥、指示藥）
 - 其他
 
 判斷後，請套用該類別的法規標準進行審核。
@@ -146,6 +148,31 @@ const regulationContext: Record<ProductType, string> = {
 3. 社群媒體注意：
    - 即使非直接廣告，展示菸品也可能違法
 `,
+    MEDICINE: `
+【藥品廣告法規重點】依據《藥事法》
+1. 藥事法第66條：
+   - 藥物廣告應於刊播前經中央或直轄市衛生主管機關核准
+   - 不得刊播未經核准、與核准事項不符、已廢止或經令停止刊播之廣告
+   - 核准登載、刊播期間不得變更原核准事項
+   
+2. 藥事法第69條：
+   - 非本法所稱之藥物，不得為醫療效能之標示或宣傳
+   - 非藥品（如食品、化妝品）不得宣稱療效
+   
+3. 常見違規：
+   - 未經核准擅自廣告藥品
+   - 超過核准適應症範圍宣稱
+   - 涉及性功能暗示或影射
+   - 使用他人名義推薦
+   - 虛偽、誇大、歪曲事實
+   - 非藥品卻宣稱醫療效能（依第69條）
+   
+4. 罰則：20萬至500萬元罰鍰
+
+5. KOL 特別注意：
+   - 業配藥品須確認廣告已取得核准
+   - 不得宣稱核准範圍以外之療效
+`,
     OTHER: `
 【一般廣告注意事項】
 1. 《公平交易法》：禁止不實廣告
@@ -198,6 +225,7 @@ function getProductTypeName(type: ProductType): string {
         FOOD: '一般食品',
         ALCOHOL: '酒類',
         TOBACCO: '菸品',
+        MEDICINE: '藥品',
         OTHER: '其他產品',
     }
     return names[type]
@@ -346,6 +374,29 @@ export function mockAnalyzeContent(content: string, productType: ProductType): A
             suggestion: '請加入「飲酒過量，有害健康」警語',
         })
         riskScore += 25
+    }
+
+    // 藥品類別：藥事法額外檢查
+    if (productType === 'MEDICINE') {
+        const medicineKeywords = [
+            { word: '未經核准', type: '違規廣告', severity: 'critical' as RiskLevel, score: 35, law: '藥事法第66條' },
+            { word: '性功能', type: '禁止宣稱', severity: 'critical' as RiskLevel, score: 35, law: '藥事法第70條' },
+            { word: '壯陽', type: '禁止宣稱', severity: 'critical' as RiskLevel, score: 30, law: '藥事法第69條、第70條' },
+            { word: '根治', type: '療效宣稱', severity: 'critical' as RiskLevel, score: 30, law: '藥事法第69條' },
+            { word: '取代藥物', type: '違規宣稱', severity: 'high' as RiskLevel, score: 25, law: '藥事法第69條' },
+        ]
+        medicineKeywords.forEach((kw) => {
+            if (content.includes(kw.word) && !issues.some(i => i.text === kw.word)) {
+                issues.push({
+                    type: kw.type,
+                    text: kw.word,
+                    severity: kw.severity,
+                    law: kw.law,
+                    suggestion: `藥品廣告不得使用「${kw.word}」，請依核准內容刊播`,
+                })
+                riskScore += kw.score
+            }
+        })
     }
 
     riskScore = Math.min(100, riskScore)

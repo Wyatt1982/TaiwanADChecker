@@ -173,6 +173,37 @@ export const regulations: Regulation[] = [
         maxFine: 4000000,
         keywords: ['食品', '食物', '飲料'],
         bannedPhrases: ['補腎', '壯陽', '護肝', '抗癌', '降血壓', '增強免疫力']
+    },
+    // 藥品（藥事法）
+    {
+        id: 'reg-medicine-1',
+        category: 'MEDICINE',
+        title: '藥事法第66條',
+        content: `藥商刊播藥物廣告時，應於刊播前將所有文字、圖畫或言詞，申請中央或直轄市衛生主管機關核准，並向傳播業者送驗核准文件。原核准機關發現已核准之藥物廣告內容或刊播方式危害民眾健康或有重大危害之虞時，應令藥商立即停止刊播並限期改善，屆期未改善者，廢止之。
+
+藥物廣告在核准登載、刊播期間不得變更原核准事項。
+
+傳播業者不得刊播未經中央或直轄市衛生主管機關核准、與核准事項不符、已廢止或經令立即停止刊播並限期改善而尚未改善之藥物廣告。`,
+        source: '藥事法',
+        sourceUrl: 'https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=L0030001&flno=66',
+        penalty: '違反者依藥事法相關罰則處罰；傳播業者違反者亦同。',
+        minFine: 200000,
+        maxFine: 5000000,
+        keywords: ['藥品', '藥物', '處方箋', '成藥', '廣告核准'],
+        bannedPhrases: ['未經核准刊播', '與核准事項不符', '擅自變更廣告內容']
+    },
+    {
+        id: 'reg-medicine-2',
+        category: 'MEDICINE',
+        title: '藥事法第69條',
+        content: `非本法所稱之藥物，不得為醫療效能之標示或宣傳。`,
+        source: '藥事法',
+        sourceUrl: 'https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=L0030001&flno=69',
+        penalty: '處新臺幣二十萬元以上五百萬元以下罰鍰。',
+        minFine: 200000,
+        maxFine: 5000000,
+        keywords: ['藥品', '藥物', '醫療效能', '非藥物'],
+        bannedPhrases: ['治療', '治癒', '療效', '預防疾病', '醫療效能', '根治', '醫治']
     }
 ]
 
@@ -2013,6 +2044,7 @@ export const categoryLabels: Record<string, { label: string; icon: string }> = {
     FOOD: { label: '一般食品', icon: '🍔' },
     ALCOHOL: { label: '酒類', icon: '🍷' },
     TOBACCO: { label: '菸品', icon: '🚬' },
+    MEDICINE: { label: '藥品', icon: '💊' },
 }
 
 // 格式化金額

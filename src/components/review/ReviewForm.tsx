@@ -13,6 +13,7 @@ type ProductType =
     | 'FOOD'
     | 'ALCOHOL'
     | 'TOBACCO'
+    | 'MEDICINE'
     | 'OTHER'
 
 type ContentType =
@@ -66,6 +67,12 @@ const productTypes: { value: ProductType; label: string; icon: string; descripti
         label: '菸品',
         icon: '🚬',
         description: '依菸害防制法審核，嚴格限制廣告'
+    },
+    {
+        value: 'MEDICINE',
+        label: '藥品',
+        icon: '💊',
+        description: '依藥事法 §66、§69 審核，須經核准且不得逾核准範圍'
     },
     {
         value: 'OTHER',
