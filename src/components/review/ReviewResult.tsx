@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { RiskBadge } from '@/components/ui/Badge'
 import { reviewModeConfigs, type ReviewAudienceMode } from '@/data/reviewModes'
 import { consumerEvidenceChecklist, reportingDisclaimer, reportingResources } from '@/data/reporting'
@@ -27,6 +27,56 @@ interface ReviewResultProps {
     provider?: 'openai' | 'anthropic' | 'gemini' | 'mock'
 }
 
+const summaryCopy: Record<
+    ReviewAudienceMode,
+    Record<RiskLevel, { title: string; body: string }>
+> = {
+    business: {
+        safe: {
+            title: '目前可以進入最後潤稿階段',
+            body: '這段內容未見明顯高風險違規特徵，但仍建議在正式發布前再做一次人工語氣與情境確認。',
+        },
+        low: {
+            title: '先做小幅修正會更穩妥',
+            body: '目前已有一些值得調整的語句，先把承諾感和絕對化描述收斂，會更像成熟品牌的表達。',
+        },
+        medium: {
+            title: '建議修改後再發布',
+            body: '這段文案已出現明顯法規風險，若直接上線，可能讓整體品牌感和合規性同時受影響。',
+        },
+        high: {
+            title: '這段內容需要大幅重寫',
+            body: '目前高風險宣稱過多，建議先回到較中性、資訊導向的敘述方式，再重新檢查一次。',
+        },
+        critical: {
+            title: '不建議直接發布這個版本',
+            body: '這份內容已帶有嚴重違規警訊，應先全面下修承諾、療效和結果保證，再進入新的送審流程。',
+        },
+    },
+    consumer: {
+        safe: {
+            title: '目前沒有明顯高風險警訊',
+            body: '雖然暫未見到明顯違規特徵，但仍建議保留基本查證，例如產品標示、來源與主管機關資訊。',
+        },
+        low: {
+            title: '這則廣告有一些需要再查的地方',
+            body: '現在還不到直接下結論的程度，但也不建議只靠這段文案就做購買判斷。',
+        },
+        medium: {
+            title: '建議先暫停採信這則說法',
+            body: '文案中已有多處可疑訊號，較安全的做法是先保留證據，再多查一層產品與賣家資訊。',
+        },
+        high: {
+            title: '這則廣告有明顯高風險特徵',
+            body: '不要只憑這些說法購買，建議優先保存截圖與連結，必要時再往主管機關或消保單位查詢。',
+        },
+        critical: {
+            title: '先不要直接相信這則廣告',
+            body: '這段內容已屬嚴重警訊，先保留證據並停止依據這些宣稱做決策，會是更安全的做法。',
+        },
+    },
+}
+
 export function ReviewResult({
     mode,
     riskLevel,
@@ -37,49 +87,71 @@ export function ReviewResult({
     processingTime,
     provider,
 }: ReviewResultProps) {
+    const [copyLabel, setCopyLabel] = useState('📋 複製內容')
+
     const providerNames = {
         openai: 'GPT-4o',
         anthropic: 'Claude 3.5',
         gemini: 'Gemini 2.0',
         mock: '規則引擎',
     }
+
     const modeConfig = reviewModeConfigs[mode]
-    const consumerMessages: Record<RiskLevel, string> = {
-        safe: '如果你是消費者，目前未見明顯高風險字眼，但仍建議核對產品許可、成分與賣家資訊後再決定是否購買。',
-        low: '如果你是消費者，這段內容已有一些需要多查證的字眼，建議先保存截圖並多比對產品資訊。',
-        medium: '如果你是消費者，建議先暫停下單，保留頁面與對話證據，再視情況向主管機關或消保單位反映。',
-        high: '如果你是消費者，這段內容有多處高風險宣稱，建議不要只憑這些說法購買，並優先保留證據。',
-        critical: '如果你是消費者，這段內容屬嚴重警訊，請先不要購買，並盡快保存證據後評估申訴或檢舉。',
+    const summary = summaryCopy[mode][riskLevel]
+
+    const handleCopy = async () => {
+        if (!revisedContent) return
+
+        try {
+            await navigator.clipboard.writeText(revisedContent)
+            setCopyLabel('已複製')
+            window.setTimeout(() => setCopyLabel('📋 複製內容'), 1800)
+        } catch {
+            setCopyLabel('複製失敗')
+            window.setTimeout(() => setCopyLabel('📋 複製內容'), 1800)
+        }
     }
 
     return (
         <div className={styles.result}>
-            {/* 風險概覽 */}
-            <div className={styles.overview}>
-                <div className={styles.scoreSection}>
+            <section className={styles.overview}>
+                <div className={styles.scoreCluster}>
                     <div
                         className={`${styles.scoreRing} ${styles[riskLevel]}`}
                         style={{ '--score': `${riskScore}%` } as React.CSSProperties}
                     >
                         <span className={styles.scoreValue}>{riskScore}</span>
                     </div>
+
                     <div className={styles.scoreInfo}>
+                        <span className={styles.reportEyebrow}>Report Summary</span>
                         <RiskBadge level={riskLevel} />
-                        <p className={styles.scoreDesc}>{modeConfig.scoreDescriptions[riskLevel]}</p>
+                        <h2 className={styles.summaryTitle}>{summary.title}</h2>
+                        <p className={styles.scoreDesc}>{summary.body}</p>
+                    </div>
+                </div>
+
+                <div className={styles.metaGrid}>
+                    <div className={styles.metaCard}>
+                        <span>風險項目</span>
+                        <strong>{issues.length}</strong>
+                    </div>
+                    <div className={styles.metaCard}>
+                        <span>輸出視角</span>
+                        <strong>{mode === 'business' ? '送審模式' : '辨識模式'}</strong>
+                    </div>
+                    <div className={styles.metaCard}>
+                        <span>分析引擎</span>
+                        <strong>{provider ? providerNames[provider] : 'AI 分析'}</strong>
                     </div>
                 </div>
 
                 {processingTime && (
                     <p className={styles.processingTime}>
                         分析時間：{(processingTime / 1000).toFixed(2)} 秒
-                        {provider && (
-                            <span className={styles.providerBadge}>
-                                {provider === 'mock' ? '🔧' : '🤖'} {providerNames[provider]}
-                            </span>
-                        )}
                     </p>
                 )}
-            </div>
+            </section>
 
             {modeConfig.disclaimerTitle && modeConfig.disclaimerBody && (
                 <div className={styles.disclaimer}>
@@ -88,61 +160,67 @@ export function ReviewResult({
                 </div>
             )}
 
-            {/* 問題清單 */}
             {issues.length > 0 && (
-                <div className={styles.section}>
-                    <h3 className={styles.sectionTitle}>
-                        <span className={styles.sectionIcon}>⚠️</span>
-                        {modeConfig.issuesTitle} ({issues.length})
-                    </h3>
+                <section className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionEyebrow}>Risk Notes</span>
+                        <h3 className={styles.sectionTitle}>{modeConfig.issuesTitle}</h3>
+                    </div>
+
                     <div className={styles.issuesList}>
                         {issues.map((issue, index) => (
-                            <div key={index} className={`${styles.issueCard} ${styles[`issue${issue.severity}`]}`}>
+                            <article
+                                key={`${issue.text}-${index}`}
+                                className={`${styles.issueCard} ${styles[`issue${issue.severity}`]}`}
+                            >
                                 <div className={styles.issueHeader}>
                                     <RiskBadge level={issue.severity} />
                                     <span className={styles.issueType}>{issue.type}</span>
                                 </div>
                                 <p className={styles.issueText}>「{issue.text}」</p>
-                                {issue.law && (
-                                    <p className={styles.issueLaw}>相關法規：{issue.law}</p>
+                                {(issue.law || issue.suggestion) && (
+                                    <div className={styles.issueMeta}>
+                                        {issue.law && <span className={styles.issueLaw}>相關法規：{issue.law}</span>}
+                                        {issue.suggestion && (
+                                            <p className={styles.issueSuggestion}>
+                                                <strong>建議：</strong>
+                                                {issue.suggestion}
+                                            </p>
+                                        )}
+                                    </div>
                                 )}
-                                {issue.suggestion && (
-                                    <p className={styles.issueSuggestion}>
-                                        <strong>建議：</strong>{issue.suggestion}
-                                    </p>
-                                )}
-                            </div>
+                            </article>
                         ))}
                     </div>
-                </div>
+                </section>
             )}
 
-            {/* 修改建議 */}
             {suggestions.length > 0 && (
-                <div className={styles.section}>
-                    <h3 className={styles.sectionTitle}>
-                        <span className={styles.sectionIcon}>💡</span>
-                        {modeConfig.suggestionsTitle}
-                    </h3>
-                    <ul className={styles.suggestionsList}>
+                <section className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionEyebrow}>Action Guide</span>
+                        <h3 className={styles.sectionTitle}>{modeConfig.suggestionsTitle}</h3>
+                    </div>
+
+                    <ol className={styles.suggestionsList}>
                         {suggestions.map((suggestion, index) => (
-                            <li key={index} className={styles.suggestionItem}>
-                                {suggestion}
+                            <li key={`${suggestion}-${index}`} className={styles.suggestionItem}>
+                                <span className={styles.suggestionIndex}>0{index + 1}</span>
+                                <p>{suggestion}</p>
                             </li>
                         ))}
-                    </ul>
-                </div>
+                    </ol>
+                </section>
             )}
 
             {mode === 'consumer' && (
-                <div className={styles.section}>
-                    <h3 className={styles.sectionTitle}>
-                        <span className={styles.sectionIcon}>🧭</span>
-                        作為消費者的下一步
-                    </h3>
-                    <div className={styles.consumerPanel}>
-                        <p className={styles.consumerLead}>{consumerMessages[riskLevel]}</p>
+                <section className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionEyebrow}>Next Steps</span>
+                        <h3 className={styles.sectionTitle}>作為消費者的下一步</h3>
+                    </div>
 
+                    <div className={styles.consumerPanel}>
                         <div className={styles.consumerChecklist}>
                             {consumerEvidenceChecklist.map((item) => (
                                 <div key={item} className={styles.consumerChecklistItem}>
@@ -171,23 +249,23 @@ export function ReviewResult({
 
                         <p className={styles.consumerNote}>{reportingDisclaimer}</p>
                     </div>
-                </div>
+                </section>
             )}
 
-            {/* AI 修正版本 */}
             {revisedContent && (
-                <div className={styles.section}>
-                    <h3 className={styles.sectionTitle}>
-                        <span className={styles.sectionIcon}>✨</span>
-                        {modeConfig.revisedTitle}
-                    </h3>
-                    <div className={styles.revisedContent}>
-                        <p>{revisedContent}</p>
-                        <button className={styles.copyBtn}>
-                            📋 複製內容
-                        </button>
+                <section className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionEyebrow}>Safer Version</span>
+                        <h3 className={styles.sectionTitle}>{modeConfig.revisedTitle}</h3>
                     </div>
-                </div>
+
+                    <div className={styles.revisedContent}>
+                        <button type="button" className={styles.copyBtn} onClick={handleCopy}>
+                            {copyLabel}
+                        </button>
+                        <p>{revisedContent}</p>
+                    </div>
+                </section>
             )}
         </div>
     )
