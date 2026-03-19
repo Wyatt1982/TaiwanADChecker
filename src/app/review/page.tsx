@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
@@ -37,7 +37,7 @@ const pageNotes: Record<
     },
 }
 
-export default function ReviewPage() {
+function ReviewPageContent() {
     const mockAuthEnabled = isMockAuthEnabled()
     const pathname = usePathname()
     const router = useRouter()
@@ -307,5 +307,13 @@ export default function ReviewPage() {
                 </section>
             </main>
         </>
+    )
+}
+
+export default function ReviewPage() {
+    return (
+        <Suspense fallback={null}>
+            <ReviewPageContent />
+        </Suspense>
     )
 }
