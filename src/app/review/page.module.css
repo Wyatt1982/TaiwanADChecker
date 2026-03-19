@@ -56,12 +56,14 @@
 
 .title {
     font-size: clamp(2.8rem, 5vw, 4.1rem);
-    line-height: 1;
+    line-height: 1.08;
+    text-wrap: balance;
 }
 
 .subtitle {
     font-size: 1.6rem;
-    line-height: 1.16;
+    line-height: 1.24;
+    text-wrap: balance;
 }
 
 .lead {

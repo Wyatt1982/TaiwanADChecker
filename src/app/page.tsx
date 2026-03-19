@@ -77,12 +77,13 @@ export default function HomePage() {
               <div className={styles.heroCopy}>
                 <span className={styles.eyebrow}>AI 快審通 ADCheck.ai</span>
                 <h1 className={styles.heroTitle}>
-                  給美業品牌、創作者與消費者的
-                  <span className={styles.heroTitleAccent}>廣告風險診療室</span>
+                  <span className={styles.heroLine}>美業廣告送審</span>
+                  <span className={styles.heroTitleAccent}>發布前先看風險</span>
                 </h1>
                 <p className={styles.heroLead}>
-                  把準備發布的文案先送審，把準備相信的廣告先辨識。
-                  用一套更乾淨、更可信的方式，把誇大、療效暗示與高風險說法看清楚。
+                  給品牌、小編、診所、創作者與一般消費者使用。
+                  把準備發布的文案先送審，把準備相信的廣告先辨識，
+                  用更清楚的方式把誇大、療效暗示與高風險說法看清楚。
                 </p>
 
                 <div className={styles.heroActions}>
@@ -149,7 +150,10 @@ export default function HomePage() {
           <div className={styles.container}>
             <div className={styles.sectionHeading}>
               <span className={styles.sectionEyebrow}>兩個入口</span>
-              <h2 className={styles.sectionTitle}>先確認你現在是要發布內容，還是要判斷一則廣告能不能信</h2>
+              <h2 className={styles.sectionTitle}>
+                <span className={styles.sectionTitleLine}>先選擇</span>
+                <span className={styles.sectionTitleLine}>你的使用情境</span>
+              </h2>
             </div>
 
             <div className={styles.modeGrid}>
@@ -178,7 +182,10 @@ export default function HomePage() {
           <div className={styles.container}>
             <div className={styles.sectionHeading}>
               <span className={styles.sectionEyebrow}>診所感的關鍵</span>
-              <h2 className={styles.sectionTitle}>真正讓人安心的，不是華麗，而是清楚、安定與可交代</h2>
+              <h2 className={styles.sectionTitle}>
+                <span className={styles.sectionTitleLine}>讓人安心的</span>
+                <span className={styles.sectionTitleLine}>是清楚</span>
+              </h2>
             </div>
 
             <div className={styles.featureGrid}>
@@ -197,7 +204,10 @@ export default function HomePage() {
             <div className={styles.signalLayout}>
               <div className={styles.sectionHeading}>
                 <span className={styles.sectionEyebrow}>高風險詞</span>
-                <h2 className={styles.sectionTitle}>很多問題不在設計，而在那一句說得太滿的話</h2>
+                <h2 className={styles.sectionTitle}>
+                  <span className={styles.sectionTitleLine}>最常踩線的</span>
+                  <span className={styles.sectionTitleLine}>是那一句話</span>
+                </h2>
                 <p className={styles.sectionLead}>
                   尤其在美業、保健與療程內容裡，真正會讓人踩線的，常常是結果保證、療效暗示與過度比較。
                 </p>
@@ -225,7 +235,10 @@ export default function HomePage() {
           <div className={styles.container}>
             <div className={styles.sectionHeading}>
               <span className={styles.sectionEyebrow}>消費者也能用</span>
-              <h2 className={styles.sectionTitle}>如果你是看到廣告的人，也可以先做最基本的自保</h2>
+              <h2 className={styles.sectionTitle}>
+                <span className={styles.sectionTitleLine}>看到廣告</span>
+                <span className={styles.sectionTitleLine}>也能先自保</span>
+              </h2>
               <p className={styles.sectionLead}>
                 不需要先讀完法條，先把證據留好、先辨識高風險說法，再決定下一步要不要反映或申訴。
               </p>
@@ -272,7 +285,10 @@ export default function HomePage() {
             <div className={styles.finalCard}>
               <div>
                 <span className={styles.sectionEyebrow}>開始使用</span>
-                <h2 className={styles.finalTitle}>先把風險看清楚，再決定要不要發、要不要買</h2>
+                <h2 className={styles.finalTitle}>
+                  <span className={styles.sectionTitleLine}>先看風險</span>
+                  <span className={styles.sectionTitleLine}>再決定下一步</span>
+                </h2>
               </div>
 
               <div className={styles.finalActions}>

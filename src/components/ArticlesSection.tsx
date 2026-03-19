@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { getFeaturedArticles } from '@/data/articles'
 import styles from './ArticlesSection.module.css'
@@ -24,7 +25,7 @@ export function ArticlesSection() {
                 <div className={styles.header}>
                     <h2 className={styles.title}>📚 法規新知與教學</h2>
                     <p className={styles.subtitle}>
-                        掌握最新廣告法規動態，學習合規文案撰寫技巧
+                        掌握最新廣告法規動態，學會怎麼寫得更安全，也看懂常見誇大話術
                     </p>
                 </div>
 
@@ -32,9 +33,12 @@ export function ArticlesSection() {
                     {articles.map((article) => (
                         <article key={article.id} className={styles.card}>
                             <div className={styles.thumbnail}>
-                                <img
+                                <Image
                                     src={thumbnailMap[article.slug] || '/images/articles/penalty-cases.png'}
                                     alt={article.title}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                    className={styles.thumbnailImage}
                                 />
                                 <span className={styles.category}>{article.category}</span>
                             </div>
