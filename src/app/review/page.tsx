@@ -34,44 +34,28 @@ interface ReviewData {
     audienceMode?: ReviewAudienceMode
 }
 
-const reviewStudioCopy: Record<
+const pageNotes: Record<
     ReviewAudienceMode,
     {
         eyebrow: string
         headline: string
-        lead: string
-        deliverables: string[]
-        noteTitle: string
-        notes: string[]
+        description: string
+        bullets: string[]
     }
 > = {
     business: {
-        eyebrow: 'Beauty Compliance Desk',
-        headline: '把每一段準備發布的內容，先變成更穩的版本',
-        lead: '從療程介紹、商品頁、KOL 合作稿到客服私訊，這一頁的任務是讓你的內容在發布前就長得更像專業品牌，而不是風險來源。',
-        deliverables: [
-            '高風險句與法規依據',
-            '較安全的改寫方向',
-            '可當內部送審紀錄的結果頁',
-        ],
-        noteTitle: '這次送審特別適合檢查',
-        notes: ['療程案例分享', '效果見證與對比圖文案', '客服私訊與社群貼文'],
+        eyebrow: '經營者模式',
+        headline: '發布前先做一次乾淨的合規檢查',
+        description: '適合美業品牌、小編、診所、KOL 與保健商品團隊。把商品頁、社群貼文、私訊與合作稿先送審，再決定是否上線。',
+        bullets: ['高風險語句', '法規依據', '改寫方向'],
     },
     consumer: {
-        eyebrow: 'Consumer Ad Check',
-        headline: '先判斷這則廣告是不是說得太滿，再決定要不要相信',
-        lead: '如果你是看到限動、商品頁或推銷話術的人，這裡會用白話方式拆出可疑點，幫你先做風險辨識，再決定下一步要不要查證或反映。',
-        deliverables: [
-            '可疑重點與高風險特徵',
-            '保留證據與查證方向',
-            '官方申訴 / 檢舉連結提示',
-        ],
-        noteTitle: '這次辨識常見於',
-        notes: ['團購貼文與限動', '保健品或醫美商品頁', '客服強力推銷話術'],
+        eyebrow: '消費者模式',
+        headline: '下單前先判斷一則廣告是不是講得太滿',
+        description: '適合一般消費者與團購跟單者。先辨識可疑點、保留證據，再決定是否相信或是否需要反映。',
+        bullets: ['可疑重點', '查證方向', '官方資源'],
     },
 }
-
-const touchpointTags = ['商品頁', '社群貼文', '私訊話術', '合作腳本', '案例分享']
 
 export default function ReviewPage() {
     const mockAuthEnabled = isMockAuthEnabled()
@@ -88,7 +72,7 @@ export default function ReviewPage() {
     const [usageStatus, setUsageStatus] = useState({ used: 0, limit: 1, remaining: 1, isLoggedIn: false })
 
     const modeConfig = reviewModeConfigs[audienceMode]
-    const modeCopy = reviewStudioCopy[audienceMode]
+    const note = pageNotes[audienceMode]
 
     useEffect(() => {
         const queryMode = searchParams.get('mode')
@@ -221,73 +205,45 @@ export default function ReviewPage() {
             )}
 
             <main className={styles.main}>
-                <section className={styles.hero}>
-                    <div className={styles.heroAuraLeft}></div>
-                    <div className={styles.heroAuraRight}></div>
-                    <div className={`${styles.container} ${styles.heroGrid}`}>
-                        <div className={styles.heroCopy}>
-                            <span className={styles.eyebrow}>{modeCopy.eyebrow}</span>
-                            <h1 className={styles.title}>
-                                {modeConfig.pageTitle}
-                                <span className={styles.titleAccent}>{modeCopy.headline}</span>
-                            </h1>
-                            <p className={styles.subtitle}>
-                                {modeConfig.pageSubtitle}
-                                {' '}
-                                {modeCopy.lead}
-                            </p>
+                <section className={styles.topSection}>
+                    <div className={styles.container}>
+                        <div className={styles.topGrid}>
+                            <div className={styles.topCopy}>
+                                <span className={styles.eyebrow}>{note.eyebrow}</span>
+                                <h1 className={styles.title}>{modeConfig.pageTitle}</h1>
+                                <p className={styles.subtitle}>{note.headline}</p>
+                                <p className={styles.lead}>{note.description}</p>
 
-                            <div className={styles.touchpointRow}>
-                                {touchpointTags.map((tag) => (
-                                    <span key={tag} className={styles.touchpointTag}>
-                                        {tag}
-                                    </span>
-                                ))}
+                                <div className={styles.tagRow}>
+                                    {note.bullets.map((item) => (
+                                        <span key={item} className={styles.tag}>
+                                            {item}
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
 
-                            <div className={styles.usageRow}>
-                                <div className={styles.usageCard}>
-                                    <span className={styles.usageLabel}>今日剩餘額度</span>
+                            <aside className={styles.summaryCard}>
+                                <div className={styles.summaryStat}>
+                                    <span>今日剩餘額度</span>
                                     <strong>{usageStatus.remaining}/{usageStatus.limit}</strong>
                                 </div>
-                                <div className={styles.usageCard}>
-                                    <span className={styles.usageLabel}>目前輸出</span>
-                                    <strong>{audienceMode === 'business' ? '送審報告' : '風險辨識報告'}</strong>
+                                <div className={styles.summaryStat}>
+                                    <span>結果類型</span>
+                                    <strong>{audienceMode === 'business' ? '送審報告' : '辨識報告'}</strong>
                                 </div>
                                 {mockAuthEnabled && !usageStatus.isLoggedIn && (
                                     <Link href="/auth/login" className={styles.loginLink}>
                                         登入獲得更多額度
                                     </Link>
                                 )}
-                            </div>
+                            </aside>
                         </div>
-
-                        <aside className={styles.heroPanel}>
-                            <div className={styles.panelCard}>
-                                <span className={styles.panelEyebrow}>YOU WILL GET</span>
-                                <div className={styles.deliverableList}>
-                                    {modeCopy.deliverables.map((item) => (
-                                        <div key={item} className={styles.deliverableItem}>
-                                            {item}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className={styles.panelCardWarm}>
-                                <span className={styles.panelEyebrow}>{modeCopy.noteTitle}</span>
-                                <ul className={styles.noteList}>
-                                    {modeCopy.notes.map((item) => (
-                                        <li key={item}>{item}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </aside>
                     </div>
                 </section>
 
                 {!isServiceAvailable && serviceStatus && (
-                    <div className={`${styles.container} ${styles.bannerWrap}`}>
+                    <div className={styles.container}>
                         <div className={styles.maintenanceBanner}>
                             <span className={styles.maintenanceIcon}>🚧</span>
                             <div className={styles.maintenanceContent}>
@@ -299,68 +255,70 @@ export default function ReviewPage() {
                 )}
 
                 <section className={styles.workspace}>
-                    <div className={`${styles.container} ${styles.workspaceGrid}`}>
-                        <div className={styles.formShell}>
-                            <div className={styles.shellLabel}>Review Setup</div>
-                            <div className={styles.formCard}>
-                                <ReviewForm
-                                    mode={audienceMode}
-                                    onModeChange={handleModeChange}
-                                    onSubmit={handleSubmit}
-                                    loading={loading}
-                                />
-                            </div>
-                        </div>
-
-                        <div className={styles.resultShell}>
-                            <div className={styles.shellLabel}>Report View</div>
-                            <div className={styles.resultCard}>
-                                {loading && (
-                                    <div className={styles.loadingState}>
-                                        <div className={styles.spinner}></div>
-                                        <p className={styles.loadingTitle}>{modeConfig.loadingTitle}</p>
-                                        <p className={styles.loadingHint}>{modeConfig.loadingHint}</p>
-                                    </div>
-                                )}
-
-                                {error && (
-                                    <div className={styles.errorState}>
-                                        <span className={styles.errorIcon}>⚠️</span>
-                                        <h3>這次分析沒有完成</h3>
-                                        <p>{error}</p>
-                                        <button onClick={() => setError(null)} className={styles.retryBtn}>
-                                            回到編輯狀態
-                                        </button>
-                                    </div>
-                                )}
-
-                                {result && !loading && (
-                                    <ReviewResult
-                                        mode={result.audienceMode ?? audienceMode}
-                                        riskLevel={result.riskLevel}
-                                        riskScore={result.riskScore}
-                                        issues={result.issues}
-                                        suggestions={result.suggestions}
-                                        revisedContent={result.revisedContent}
-                                        processingTime={result.processingTime}
-                                        provider={result.provider}
+                    <div className={styles.container}>
+                        <div className={styles.workspaceGrid}>
+                            <div className={styles.formColumn}>
+                                <div className={styles.columnLabel}>送審設定</div>
+                                <div className={styles.panel}>
+                                    <ReviewForm
+                                        mode={audienceMode}
+                                        onModeChange={handleModeChange}
+                                        onSubmit={handleSubmit}
+                                        loading={loading}
                                     />
-                                )}
+                                </div>
+                            </div>
 
-                                {!result && !loading && !error && (
-                                    <div className={styles.emptyState}>
-                                        <span className={styles.emptyEyebrow}>Report Preview</span>
-                                        <h3>{modeConfig.emptyTitle}</h3>
-                                        <p>{modeConfig.emptyDescription}</p>
-                                        <div className={styles.emptyChecklist}>
-                                            {modeCopy.deliverables.map((item) => (
-                                                <div key={item} className={styles.emptyItem}>
-                                                    {item}
-                                                </div>
-                                            ))}
+                            <div className={styles.resultColumn}>
+                                <div className={styles.columnLabel}>審核結果</div>
+                                <div className={styles.panel}>
+                                    {loading && (
+                                        <div className={styles.loadingState}>
+                                            <div className={styles.spinner}></div>
+                                            <h3>{modeConfig.loadingTitle}</h3>
+                                            <p>{modeConfig.loadingHint}</p>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+
+                                    {error && (
+                                        <div className={styles.errorState}>
+                                            <span className={styles.errorIcon}>⚠️</span>
+                                            <h3>這次分析沒有完成</h3>
+                                            <p>{error}</p>
+                                            <button onClick={() => setError(null)} className={styles.retryBtn}>
+                                                關閉訊息
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {result && !loading && (
+                                        <ReviewResult
+                                            mode={result.audienceMode ?? audienceMode}
+                                            riskLevel={result.riskLevel}
+                                            riskScore={result.riskScore}
+                                            issues={result.issues}
+                                            suggestions={result.suggestions}
+                                            revisedContent={result.revisedContent}
+                                            processingTime={result.processingTime}
+                                            provider={result.provider}
+                                        />
+                                    )}
+
+                                    {!result && !loading && !error && (
+                                        <div className={styles.emptyState}>
+                                            <span className={styles.emptyLabel}>尚未送出內容</span>
+                                            <h3>{modeConfig.emptyTitle}</h3>
+                                            <p>{modeConfig.emptyDescription}</p>
+                                            <div className={styles.emptyList}>
+                                                {note.bullets.map((item) => (
+                                                    <div key={item} className={styles.emptyItem}>
+                                                        {item}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

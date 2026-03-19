@@ -9,72 +9,60 @@ import styles from './page.module.css'
 
 const modeCards: Array<{
   mode: ReviewAudienceMode
-  eyebrow: string
   title: string
   description: string
   bullets: string[]
 }> = [
   {
     mode: 'business',
-    eyebrow: 'FOR BRANDS, CLINICS, CREATORS',
-    title: '發布前送審，讓內容更像作品，不像風險來源',
-    description: '適合美業品牌、小編、KOL、保健團隊與客服，先把療效暗示、誇大用語與危險句型收乾淨再上線。',
+    title: '經營者送審',
+    description: '給品牌、小編、診所、美業與 KOL 的發布前審核流程。先收掉高風險語句，再讓內容上線。',
     bullets: [
-      '看到高風險句、法規依據與較安全的改寫方向',
-      '適合商品頁、社群貼文、私訊回覆、案例分享與合作腳本',
-      '把審核結果整理成可交付、可留存的內部檢查流程',
+      '標出危險句與可能涉及的法規依據',
+      '提供較安全的改寫方向與修正版示例',
+      '把送審結果整理成可留存的工作流程',
     ],
   },
   {
     mode: 'consumer',
-    eyebrow: 'FOR SHOPPERS, FOLLOWERS, FAMILIES',
-    title: '下單前辨識，先判斷這則廣告值不值得相信',
-    description: '適合一般消費者、團購跟單者與美業潛在客戶，快速看出是否有誇大、保證效果或其他高風險違規特徵。',
+    title: '消費者辨識',
+    description: '給一般消費者的廣告風險查核入口。快速判斷一則說法是不是講得太滿，是否值得相信。',
     bullets: [
-      '用白話方式指出可疑重點，不把人丟進艱澀法條',
-      '直接告訴你該先保留什麼證據、該去哪裡查證',
-      '把衝動下單前最該看的風險整理在同一頁',
+      '指出誇大、療效暗示與結果保證等高風險特徵',
+      '整理查證方向、保留證據與官方資源',
+      '幫你在下單前先把風險看清楚',
     ],
   },
 ]
 
-const beautyMoments = [
+const clinicFeatures = [
   {
-    step: '01',
-    title: 'Before / After 與見證語，是美業最常踩雷的地方',
-    description: '很多風險不是出在正式廣告，而是案例照、心得分享、術後描述和客服回覆的語氣。',
+    title: '像診所內部審稿，而不是臨時問 AI',
+    description: '輸出不是一段聊天紀錄，而是更像風險評估報告。你可以看到重點句、風險、建議與下一步。',
   },
   {
-    step: '02',
-    title: '私訊、限動、商品頁與合作腳本，全部都可能被截圖',
-    description: '你以為只是臨場回覆，實際上在主管機關眼中，它一樣可能是宣傳內容的一部分。',
+    title: '美業常見情境都能先走一遍',
+    description: '商品頁、限動、私訊、療程介紹、before / after 敘述與合作稿，都可以先放進來檢查。',
   },
   {
-    step: '03',
-    title: '真正好用的工具，不只找錯，也要幫你交代得出去',
-    description: '風險分數、可疑句、修正方向與後續動作要放在一起，才像專業審核，不像一次性的 AI 對話。',
+    title: '同時服務品牌端與消費端',
+    description: '一邊幫經營者降低出稿風險，一邊讓消費者更容易辨識不實或過度承諾的說法。',
   },
 ]
 
-const riskSignals = [
-  '七天有感',
-  '立即見效',
-  '不用運動也能瘦',
-  '改善睡眠問題',
-  '逆轉老化',
-  '醫師都在用',
-  '保證有效',
-  '完全無副作用',
-  '比藥還有效',
-  '術後效果超明顯',
-  '三天粉刺代謝乾淨',
-  '根治、治療、修復',
-]
-
-const proofMetrics = [
-  { value: '3 秒', label: '完成初步風險判讀' },
-  { value: '雙模式', label: '經營者送審 / 消費者辨識' },
-  { value: '台灣法規', label: '食安法、藥事法、化粧品與公平法重點' },
+const signalGroups = [
+  {
+    label: '療效承諾',
+    items: ['改善睡眠問題', '逆轉老化', '三天粉刺代謝乾淨'],
+  },
+  {
+    label: '結果保證',
+    items: ['七天有感', '立即見效', '保證有效'],
+  },
+  {
+    label: '過度比較',
+    items: ['比藥還有效', '醫師都在用', '完全無副作用'],
+  },
 ]
 
 export default function HomePage() {
@@ -84,90 +72,73 @@ export default function HomePage() {
 
       <main className={styles.main}>
         <section className={styles.hero}>
-          <div className={styles.heroAuraLeft}></div>
-          <div className={styles.heroAuraRight}></div>
-          <div className={`${styles.container} ${styles.heroInner}`}>
-            <div className={styles.heroCopy}>
-              <span className={styles.eyebrow}>Aesthetic Compliance Studio</span>
-              <h1 className={styles.heroTitle}>
-                為美業網站、創作者文案與消費決策
-                <span className={styles.heroTitleAccent}>重新設計的一套廣告風險體驗</span>
-              </h1>
-              <p className={styles.heroLead}>
-                不是冷冰冰的法規資料站，而是一個更像品牌顧問的入口。
-                你可以在發布前先送審，也可以在下單前先辨識，讓美感、專業與信任放在同一個頁面上。
-              </p>
+          <div className={styles.container}>
+            <div className={styles.heroGrid}>
+              <div className={styles.heroCopy}>
+                <span className={styles.eyebrow}>AI 快審通 ADCheck.ai</span>
+                <h1 className={styles.heroTitle}>
+                  給美業品牌、創作者與消費者的
+                  <span className={styles.heroTitleAccent}>廣告風險診療室</span>
+                </h1>
+                <p className={styles.heroLead}>
+                  把準備發布的文案先送審，把準備相信的廣告先辨識。
+                  用一套更乾淨、更可信的方式，把誇大、療效暗示與高風險說法看清楚。
+                </p>
 
-              <div className={styles.heroActions}>
-                <Link href="/review?mode=business" className={styles.primaryBtn}>
-                  {reviewModeConfigs.business.ctaLabel}
-                </Link>
-                <Link href="/review?mode=consumer" className={styles.secondaryBtn}>
-                  {reviewModeConfigs.consumer.ctaLabel}
-                </Link>
-                <Link href="/cases" className={styles.ghostBtn}>
-                  看真實開罰案例
-                </Link>
-              </div>
+                <div className={styles.heroActions}>
+                  <Link href="/review?mode=business" className={styles.primaryBtn}>
+                    {reviewModeConfigs.business.ctaLabel}
+                  </Link>
+                  <Link href="/review?mode=consumer" className={styles.secondaryBtn}>
+                    {reviewModeConfigs.consumer.ctaLabel}
+                  </Link>
+                </div>
 
-              <div className={styles.proofRow}>
-                {proofMetrics.map((metric) => (
-                  <div key={metric.label} className={styles.proofCard}>
-                    <strong>{metric.value}</strong>
-                    <span>{metric.label}</span>
+                <div className={styles.heroMeta}>
+                  <div className={styles.metaItem}>
+                    <strong>3 秒內</strong>
+                    <span>完成初步風險判讀</span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.heroVisual}>
-              <div className={styles.previewCard}>
-                <div className={styles.previewHeader}>
-                  <span className={styles.previewTag}>PREVIEW REPORT</span>
-                  <span className={styles.previewTime}>即時分析中</span>
-                </div>
-
-                <div className={styles.sampleBlock}>
-                  <span className={styles.sampleLabel}>文案片段</span>
-                  <p className={styles.sampleText}>
-                    「術後三天超有感，粉刺直接代謝乾淨，客人都說像換了一張臉。」
-                  </p>
-                </div>
-
-                <div className={styles.previewSignals}>
-                  <span className={styles.signalPill}>療效暗示</span>
-                  <span className={styles.signalPill}>結果保證</span>
-                  <span className={styles.signalPill}>案例分享風險</span>
-                </div>
-
-                <div className={styles.previewStats}>
-                  <div className={styles.previewStatCard}>
-                    <span className={styles.previewStatLabel}>風險分數</span>
-                    <strong>78 / 100</strong>
+                  <div className={styles.metaItem}>
+                    <strong>雙模式</strong>
+                    <span>送審與消費者查核共用</span>
                   </div>
-                  <div className={styles.previewStatCard}>
-                    <span className={styles.previewStatLabel}>建議動作</span>
-                    <strong>先修改再發布</strong>
+                  <div className={styles.metaItem}>
+                    <strong>台灣法規</strong>
+                    <span>聚焦美業、保健與廣告風險</span>
                   </div>
                 </div>
               </div>
 
-              <div className={styles.portraitCard}>
-                <div className={styles.portraitMedia}>
-                  <Image
-                    src="/images/hero.png"
-                    alt="AI 快審通 ADCheck.ai"
-                    fill
-                    sizes="(max-width: 1024px) 280px, 360px"
-                    className={styles.portraitImage}
-                    priority
-                  />
+              <div className={styles.heroPanel}>
+                <div className={styles.visualCard}>
+                  <div className={styles.visualMedia}>
+                    <Image
+                      src="/images/hero.png"
+                      alt="AI 快審通 ADCheck.ai"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 420px"
+                      className={styles.heroImage}
+                      priority
+                    />
+                  </div>
+
+                  <div className={styles.visualBody}>
+                    <span className={styles.cardLabel}>本週常見風險情境</span>
+                    <p className={styles.visualText}>
+                      「術後很快就看得到效果」、「七天有感」、「不用運動也能瘦」這類說法，
+                      往往是美業與保健品最容易出現問題的地方。
+                    </p>
+                  </div>
                 </div>
-                <div className={styles.portraitCopy}>
-                  <span className={styles.portraitKicker}>Beauty-first interface</span>
-                  <p>
-                    從療程介紹、保健商品、客服私訊到 KOL 合作稿，都先走一次更優雅的風險檢查流程。
-                  </p>
+
+                <div className={styles.noteCard}>
+                  <span className={styles.cardLabel}>你會拿到的結果</span>
+                  <ul className={styles.noteList}>
+                    <li>風險等級與關鍵句整理</li>
+                    <li>較安全的改寫方向或查證建議</li>
+                    <li>適合品牌內部與消費者閱讀的結果頁</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -176,12 +147,9 @@ export default function HomePage() {
 
         <section className={styles.section}>
           <div className={styles.container}>
-            <div className={styles.sectionHeader}>
-              <span className={styles.sectionEyebrow}>TWO ENTRY POINTS</span>
-              <h2 className={styles.sectionTitle}>同一套審核引擎，拆成兩種更清楚的使用情境</h2>
-              <p className={styles.sectionIntro}>
-                首頁不再讓品牌、小編、消費者擠在同一條訊息裡，而是先把他們帶到最適合的起點。
-              </p>
+            <div className={styles.sectionHeading}>
+              <span className={styles.sectionEyebrow}>兩個入口</span>
+              <h2 className={styles.sectionTitle}>先確認你現在是要發布內容，還是要判斷一則廣告能不能信</h2>
             </div>
 
             <div className={styles.modeGrid}>
@@ -189,12 +157,11 @@ export default function HomePage() {
                 const config = reviewModeConfigs[card.mode]
                 return (
                   <article key={card.mode} className={styles.modeCard}>
-                    <span className={styles.modeEyebrow}>{card.eyebrow}</span>
-                    <h3 className={styles.modeTitle}>{card.title}</h3>
+                    <h3>{card.title}</h3>
                     <p className={styles.modeDescription}>{card.description}</p>
                     <ul className={styles.modeList}>
-                      {card.bullets.map((bullet) => (
-                        <li key={bullet}>{bullet}</li>
+                      {card.bullets.map((item) => (
+                        <li key={item}>{item}</li>
                       ))}
                     </ul>
                     <Link href={`/review?mode=${card.mode}`} className={styles.modeLink}>
@@ -207,69 +174,68 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className={styles.storySection}>
+        <section className={styles.sectionAlt}>
           <div className={styles.container}>
-            <div className={styles.sectionHeader}>
-              <span className={styles.sectionEyebrow}>WHY IT FITS BEAUTY BRANDS</span>
-              <h2 className={styles.sectionTitle}>美業最需要的，不只是法規提醒，而是更穩定的品牌表現</h2>
-              <p className={styles.sectionIntro}>
-                視覺和話術通常一起出現。當網站做得越美，內容越需要被寫得剛剛好，既有吸引力，也不過界。
-              </p>
+            <div className={styles.sectionHeading}>
+              <span className={styles.sectionEyebrow}>診所感的關鍵</span>
+              <h2 className={styles.sectionTitle}>真正讓人安心的，不是華麗，而是清楚、安定與可交代</h2>
             </div>
 
-            <div className={styles.storyGrid}>
-              {beautyMoments.map((item) => (
-                <article key={item.step} className={styles.storyCard}>
-                  <span className={styles.storyStep}>{item.step}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
+            <div className={styles.featureGrid}>
+              {clinicFeatures.map((feature) => (
+                <article key={feature.title} className={styles.featureCard}>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.description}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section className={styles.signalSection}>
-          <div className={`${styles.container} ${styles.signalLayout}`}>
-            <div className={styles.signalPanel}>
-              <span className={styles.sectionEyebrow}>COMMON RED FLAGS</span>
-              <h2 className={styles.sectionTitle}>這些字眼一出現，整體質感再好，也會立刻變成高風險訊號</h2>
-              <p className={styles.sectionIntro}>
-                尤其在美業、保健與案例分享場景裡，最常出事的不是設計，而是那一句說得太滿、太像療效承諾的話。
-              </p>
-            </div>
+        <section className={styles.section}>
+          <div className={styles.container}>
+            <div className={styles.signalLayout}>
+              <div className={styles.sectionHeading}>
+                <span className={styles.sectionEyebrow}>高風險詞</span>
+                <h2 className={styles.sectionTitle}>很多問題不在設計，而在那一句說得太滿的話</h2>
+                <p className={styles.sectionLead}>
+                  尤其在美業、保健與療程內容裡，真正會讓人踩線的，常常是結果保證、療效暗示與過度比較。
+                </p>
+              </div>
 
-            <div className={styles.signalCloud}>
-              {riskSignals.map((item, index) => (
-                <span
-                  key={item}
-                  className={`${styles.signalToken} ${index % 3 === 1 ? styles.signalTokenWarm : ''} ${index % 4 === 0 ? styles.signalTokenDeep : ''}`}
-                >
-                  {item}
-                </span>
-              ))}
+              <div className={styles.signalGrid}>
+                {signalGroups.map((group) => (
+                  <article key={group.label} className={styles.signalCard}>
+                    <span className={styles.signalLabel}>{group.label}</span>
+                    <div className={styles.signalList}>
+                      {group.items.map((item) => (
+                        <span key={item} className={styles.signalItem}>
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <section className={styles.consumerSection}>
+        <section className={styles.sectionAlt}>
           <div className={styles.container}>
-            <div className={styles.consumerShell}>
-              <div className={styles.consumerIntroBlock}>
-                <span className={styles.sectionEyebrow}>FOR CONSUMERS</span>
-                <h2 className={styles.sectionTitle}>如果你是看到廣告的人，這一頁也能幫你先判斷值不值得相信</h2>
-                <p className={styles.sectionIntro}>
-                  當你遇到保證有效、快速見效、過度承諾的商品頁或限動，不需要先看完整法條，也能先做正確的自保動作。
-                </p>
-                <Link href="/review?mode=consumer" className={styles.consumerButton}>
-                  我是消費者，先辨識風險
-                </Link>
-              </div>
+            <div className={styles.sectionHeading}>
+              <span className={styles.sectionEyebrow}>消費者也能用</span>
+              <h2 className={styles.sectionTitle}>如果你是看到廣告的人，也可以先做最基本的自保</h2>
+              <p className={styles.sectionLead}>
+                不需要先讀完法條，先把證據留好、先辨識高風險說法，再決定下一步要不要反映或申訴。
+              </p>
+            </div>
 
+            <div className={styles.consumerGrid}>
               <div className={styles.consumerChecklist}>
                 {consumerEvidenceChecklist.map((item, index) => (
-                  <div key={item} className={styles.checklistCard}>
-                    <span className={styles.checklistIndex}>0{index + 1}</span>
+                  <div key={item} className={styles.checkItem}>
+                    <span className={styles.checkIndex}>0{index + 1}</span>
                     <p>{item}</p>
                   </div>
                 ))}
@@ -292,9 +258,9 @@ export default function HomePage() {
                   </article>
                 ))}
               </div>
-
-              <p className={styles.consumerDisclaimer}>{reportingDisclaimer}</p>
             </div>
+
+            <p className={styles.consumerNote}>{reportingDisclaimer}</p>
           </div>
         </section>
 
@@ -304,12 +270,11 @@ export default function HomePage() {
         <section className={styles.finalSection}>
           <div className={styles.container}>
             <div className={styles.finalCard}>
-              <span className={styles.sectionEyebrow}>NEXT STEP</span>
-              <h2 className={styles.finalTitle}>把首頁先做得更美，接下來就讓每一段內容也更穩</h2>
-              <p className={styles.finalText}>
-                無論你是準備發布一則療程文案，還是正猶豫一則看起來太完美的商品頁，
-                先用 AI 快審通把風險看清楚，再決定下一步。
-              </p>
+              <div>
+                <span className={styles.sectionEyebrow}>開始使用</span>
+                <h2 className={styles.finalTitle}>先把風險看清楚，再決定要不要發、要不要買</h2>
+              </div>
+
               <div className={styles.finalActions}>
                 <Link href="/review?mode=business" className={styles.primaryBtn}>
                   前往經營者送審

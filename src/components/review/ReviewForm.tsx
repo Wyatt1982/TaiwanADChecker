@@ -128,10 +128,10 @@ export function ReviewForm({ mode, onModeChange, onSubmit, loading = false }: Re
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formIntro}>
-                <span className={styles.formEyebrow}>Review Setup</span>
-                <h2 className={styles.formTitle}>先定義這次想看的風險範圍</h2>
+                <span className={styles.formEyebrow}>送審設定</span>
+                <h2 className={styles.formTitle}>先定義這次要檢查的內容</h2>
                 <p className={styles.formLead}>
-                    切換模式、標出產品類別與內容型態後，系統會把分析結果整理成更接近「報告」而不是單次聊天的形式。
+                    選擇使用模式、產品類別與內容型態後，系統會把結果整理成更清楚的風險報告。
                 </p>
             </div>
 
@@ -277,13 +277,13 @@ export function ReviewForm({ mode, onModeChange, onSubmit, loading = false }: Re
                     </span>
                 </div>
                 <span className={styles.statTag}>
-                    {mode === 'business' ? '發布前合規視角' : '消費前查證視角'}
+                    {mode === 'business' ? '發布前視角' : '消費前視角'}
                 </span>
             </div>
 
             <div className={styles.submitWrap}>
                 <span className={styles.statItem}>
-                    {mode === 'business' ? '提交後會優先整理改稿方向與法規依據。' : '提交後會整理可疑重點與下一步查證方式。'}
+                    {mode === 'business' ? '提交後會整理高風險句與改寫方向。' : '提交後會整理可疑重點與查證方向。'}
                 </span>
             </div>
 

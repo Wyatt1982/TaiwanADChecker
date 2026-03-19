@@ -87,7 +87,7 @@ export function ReviewResult({
     processingTime,
     provider,
 }: ReviewResultProps) {
-    const [copyLabel, setCopyLabel] = useState('📋 複製內容')
+    const [copyLabel, setCopyLabel] = useState('複製結果文字')
 
     const providerNames = {
         openai: 'GPT-4o',
@@ -105,10 +105,10 @@ export function ReviewResult({
         try {
             await navigator.clipboard.writeText(revisedContent)
             setCopyLabel('已複製')
-            window.setTimeout(() => setCopyLabel('📋 複製內容'), 1800)
+            window.setTimeout(() => setCopyLabel('複製結果文字'), 1800)
         } catch {
             setCopyLabel('複製失敗')
-            window.setTimeout(() => setCopyLabel('📋 複製內容'), 1800)
+            window.setTimeout(() => setCopyLabel('複製結果文字'), 1800)
         }
     }
 
@@ -124,7 +124,7 @@ export function ReviewResult({
                     </div>
 
                     <div className={styles.scoreInfo}>
-                        <span className={styles.reportEyebrow}>Report Summary</span>
+                        <span className={styles.reportEyebrow}>風險摘要</span>
                         <RiskBadge level={riskLevel} />
                         <h2 className={styles.summaryTitle}>{summary.title}</h2>
                         <p className={styles.scoreDesc}>{summary.body}</p>
@@ -163,7 +163,7 @@ export function ReviewResult({
             {issues.length > 0 && (
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <span className={styles.sectionEyebrow}>Risk Notes</span>
+                        <span className={styles.sectionEyebrow}>風險重點</span>
                         <h3 className={styles.sectionTitle}>{modeConfig.issuesTitle}</h3>
                     </div>
 
@@ -198,7 +198,7 @@ export function ReviewResult({
             {suggestions.length > 0 && (
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <span className={styles.sectionEyebrow}>Action Guide</span>
+                        <span className={styles.sectionEyebrow}>處理建議</span>
                         <h3 className={styles.sectionTitle}>{modeConfig.suggestionsTitle}</h3>
                     </div>
 
@@ -216,7 +216,7 @@ export function ReviewResult({
             {mode === 'consumer' && (
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <span className={styles.sectionEyebrow}>Next Steps</span>
+                        <span className={styles.sectionEyebrow}>後續動作</span>
                         <h3 className={styles.sectionTitle}>作為消費者的下一步</h3>
                     </div>
 
@@ -255,7 +255,7 @@ export function ReviewResult({
             {revisedContent && (
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <span className={styles.sectionEyebrow}>Safer Version</span>
+                        <span className={styles.sectionEyebrow}>修正版示例</span>
                         <h3 className={styles.sectionTitle}>{modeConfig.revisedTitle}</h3>
                     </div>
 
