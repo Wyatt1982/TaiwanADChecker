@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
 import { penaltyCases, categoryLabels, formatCurrency, formatDate } from '@/data/regulations'
 import styles from './page.module.css'
@@ -47,10 +48,19 @@ export default function CasesPage() {
             <main className={styles.main}>
                 <div className={styles.container}>
                     <div className={styles.header}>
+                        <span className={styles.eyebrow}>法規中心</span>
                         <h1 className={styles.title}>開罰案例庫</h1>
                         <p className={styles.subtitle}>
-                            真實的違規開罰案例，從這些案例中學習如何避免觸法
+                            真實的違規開罰案例，從裁處結果回頭理解哪些說法、做法最容易踩線。
                         </p>
+                        <div className={styles.libraryTabs}>
+                            <Link href="/regulations" className={styles.libraryTab}>
+                                法規條文
+                            </Link>
+                            <Link href="/cases" className={`${styles.libraryTab} ${styles.libraryTabActive}`}>
+                                開罰案例
+                            </Link>
+                        </div>
                     </div>
 
                     {/* 搜尋框 */}

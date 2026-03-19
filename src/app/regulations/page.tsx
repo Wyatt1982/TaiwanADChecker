@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
 import { regulations, categoryLabels, formatCurrency } from '@/data/regulations'
 import styles from './page.module.css'
@@ -36,10 +37,19 @@ export default function RegulationsPage() {
             <main className={styles.main}>
                 <div className={styles.container}>
                     <div className={styles.header}>
+                        <span className={styles.eyebrow}>法規中心</span>
                         <h1 className={styles.title}>法規庫</h1>
                         <p className={styles.subtitle}>
-                            台灣廣告相關法規彙整，了解各類產品的廣告規範與罰則
+                            台灣廣告相關法規彙整，先看條文重點，再切到開罰案例理解實際風險。
                         </p>
+                        <div className={styles.libraryTabs}>
+                            <Link href="/regulations" className={`${styles.libraryTab} ${styles.libraryTabActive}`}>
+                                法規條文
+                            </Link>
+                            <Link href="/cases" className={styles.libraryTab}>
+                                開罰案例
+                            </Link>
+                        </div>
                     </div>
 
                     {/* 搜尋框 */}

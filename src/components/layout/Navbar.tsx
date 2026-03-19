@@ -55,14 +55,14 @@ export function Navbar() {
                     <Link href="/regulations" className={styles.link}>
                         法規資料庫
                     </Link>
+                    <Link href="/cases" className={styles.link}>
+                        開罰案例
+                    </Link>
                     <Link href="/kols" className={styles.link}>
                         KOL 資料庫
                     </Link>
                     <Link href="/jobs" className={styles.link}>
                         徵人專區
-                    </Link>
-                    <Link href="/cases" className={styles.link}>
-                        案例庫
                     </Link>
                 </div>
 
