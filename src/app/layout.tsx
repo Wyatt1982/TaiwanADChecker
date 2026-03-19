@@ -1,22 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { SponsorBanner } from "@/components/SponsorBanner";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
 export const metadata: Metadata = {
   title: "AI 快審通 ADCheck.ai | 3 秒偵測廣告違規，讓罰單與你無緣",
-  description: "專為美業、KOL、保健品銷售打造的 AI 廣告法規審核工具。3 秒偵測違規文案，提供合規修改建議，避免 4~400 萬罰款風險。",
-  keywords: ["AI快審通", "ADCheck", "廣告審核", "法規檢查", "保健食品", "化妝品", "醫美", "KOL", "美業", "台灣"],
+  description: "適合創作者、商家與消費者的 AI 廣告風險檢查工具。3 秒判斷商品頁、社群貼文與私訊話術是否有誇大或違規風險，並提供修正與申訴方向。",
+  keywords: ["AI快審通", "ADCheck", "廣告審核", "法規檢查", "不實廣告", "消費者申訴", "保健食品", "化妝品", "KOL", "台灣"],
   authors: [{ name: "AI 快審通 ADCheck.ai" }],
   openGraph: {
     title: "AI 快審通 ADCheck.ai",
-    description: "3 秒偵測廣告違規，讓罰單與你無緣",
+    description: "3 秒判斷廣告有沒有誇大風險，發布前與下單前都能用",
     type: "website",
     locale: "zh_TW",
   },
@@ -29,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-TW" data-theme="light">
-      <body className={inter.variable}>
+      <body>
         {children}
         <SponsorBanner />
         <FeedbackWidget />

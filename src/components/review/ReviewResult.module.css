@@ -99,7 +99,7 @@
 
 .summaryTitle,
 .sectionTitle {
-    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    font-family: var(--font-display);
     letter-spacing: -0.03em;
 }
 

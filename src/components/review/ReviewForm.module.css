@@ -23,7 +23,7 @@
 }
 
 .formTitle {
-    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    font-family: var(--font-display);
     font-size: 2rem;
     line-height: 1.06;
     letter-spacing: -0.03em;

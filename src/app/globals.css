@@ -3,8 +3,6 @@
    火煉金（專業審核），土納財（安全落地）
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 :root {
   /* ===== 命理色彩系統 ===== */
 
@@ -131,8 +129,9 @@
   --space-20: 5rem;
 
   /* ===== 字體 ===== */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'SF Mono', 'Fira Code', monospace;
+  --font-sans: "PingFang TC", "Noto Sans TC", "Source Han Sans TC", "Microsoft JhengHei", "Helvetica Neue", sans-serif;
+  --font-display: "Songti TC", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
 
   --text-xs: 0.875rem;
   /* 14px (原 12px) */
@@ -181,11 +180,27 @@ body {
   font-family: var(--font-sans);
   background: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.72;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'kern' 1;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 /* ===== 連結樣式 ===== */
