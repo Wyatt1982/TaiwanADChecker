@@ -185,6 +185,147 @@
     gap: 14px;
 }
 
+.caseHelper {
+    line-height: 1.8;
+    color: rgba(51, 44, 44, 0.72);
+}
+
+.lawChips,
+.matchTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.lawChip,
+.matchTag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.lawChip {
+    background: #f3efea;
+    color: #5d4e4e;
+}
+
+.matchTag {
+    background: #f8f5f1;
+    color: rgba(51, 44, 44, 0.72);
+}
+
+.caseList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.caseCard {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid rgba(93, 78, 78, 0.08);
+}
+
+.caseHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.caseLabel {
+    display: inline-flex;
+    margin-bottom: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(93, 78, 78, 0.62);
+}
+
+.caseTitle {
+    font-size: 1.08rem;
+    line-height: 1.5;
+    color: #2c2421;
+}
+
+.caseMeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 0.82rem;
+    color: rgba(51, 44, 44, 0.58);
+    text-align: right;
+}
+
+.caseViolation {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #f8f5f1;
+    line-height: 1.8;
+    color: #2c2421;
+}
+
+.caseBody {
+    display: grid;
+    gap: 10px;
+}
+
+.caseInfoRow {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 12px;
+    align-items: start;
+}
+
+.caseInfoLabel {
+    font-size: 0.84rem;
+    color: rgba(93, 78, 78, 0.68);
+}
+
+.caseInfoRow strong {
+    line-height: 1.7;
+    color: #312825;
+}
+
+.caseFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.caseLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(93, 78, 78, 0.12);
+    color: #5d4e4e;
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    background: #fff;
+    transition: transform var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.caseLink:hover {
+    transform: translateY(-1px);
+    border-color: rgba(93, 78, 78, 0.24);
+    background: #faf8f5;
+}
+
 .issueCard {
     padding: 20px;
     border-radius: 18px;
@@ -358,6 +499,17 @@
     .consumerLinks {
         grid-template-columns: 1fr;
     }
+
+    .caseHeader,
+    .caseFooter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .caseMeta {
+        align-items: flex-start;
+        text-align: left;
+    }
 }
 
 @media (max-width: 640px) {
@@ -369,5 +521,10 @@
     .summaryTitle,
     .sectionTitle {
         font-size: 1.56rem;
+    }
+
+    .caseInfoRow {
+        grid-template-columns: 1fr;
+        gap: 6px;
     }
 }

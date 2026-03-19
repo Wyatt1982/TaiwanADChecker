@@ -28,6 +28,11 @@ export interface PenaltyCase {
     authority: string
     source?: string
     sourceUrl?: string
+    lawReference?: string
+    platform?: string
+    riskTags?: string[]
+    keywords?: string[]
+    sourceType?: 'official_case'
 }
 
 const namedHtmlEntities: Record<string, string> = {

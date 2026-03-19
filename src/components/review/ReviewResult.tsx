@@ -4,32 +4,25 @@ import React, { useState } from 'react'
 import { RiskBadge } from '@/components/ui/Badge'
 import { reviewModeConfigs, type ReviewAudienceMode } from '@/data/reviewModes'
 import { consumerEvidenceChecklist, reportingDisclaimer, reportingResources } from '@/data/reporting'
+import type { LawSummary, ReviewIssue, ReviewRiskLevel, SimilarCaseMatch } from '@/types/review'
 import styles from './ReviewResult.module.css'
-
-type RiskLevel = 'safe' | 'low' | 'medium' | 'high' | 'critical'
-
-interface Issue {
-    type: string
-    text: string
-    severity: RiskLevel
-    law?: string
-    suggestion?: string
-}
 
 interface ReviewResultProps {
     mode: ReviewAudienceMode
-    riskLevel: RiskLevel
+    riskLevel: ReviewRiskLevel
     riskScore: number
-    issues: Issue[]
+    issues: ReviewIssue[]
     suggestions?: string[]
     revisedContent?: string
     processingTime?: number
     provider?: 'openai' | 'anthropic' | 'gemini' | 'mock'
+    similarCases?: SimilarCaseMatch[]
+    lawSummary?: LawSummary
 }
 
 const summaryCopy: Record<
     ReviewAudienceMode,
-    Record<RiskLevel, { title: string; body: string }>
+    Record<ReviewRiskLevel, { title: string; body: string }>
 > = {
     business: {
         safe: {
@@ -86,6 +79,8 @@ export function ReviewResult({
     revisedContent,
     processingTime,
     provider,
+    similarCases = [],
+    lawSummary,
 }: ReviewResultProps) {
     const [copyLabel, setCopyLabel] = useState('複製結果文字')
 
@@ -98,6 +93,12 @@ export function ReviewResult({
 
     const modeConfig = reviewModeConfigs[mode]
     const summary = summaryCopy[mode][riskLevel]
+    const matchedByLabels: Record<SimilarCaseMatch['matchedBy'][number], string> = {
+        product_type: '同產品類別',
+        risk_tag: '同風險類型',
+        keyword: '關鍵詞重合',
+        text_overlap: '句型相似',
+    }
 
     const handleCopy = async () => {
         if (!revisedContent) return
@@ -189,6 +190,84 @@ export function ReviewResult({
                                         )}
                                     </div>
                                 )}
+                            </article>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {similarCases.length > 0 && (
+                <section className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionEyebrow}>官方前例</span>
+                        <h3 className={styles.sectionTitle}>相似官方案例</h3>
+                        <p className={styles.caseHelper}>
+                            以下是系統找到的相似官方裁罰前例，用來輔助判讀風險，不構成正式法律意見。
+                        </p>
+                        {lawSummary?.primaryLaws?.length ? (
+                            <div className={styles.lawChips}>
+                                {lawSummary.primaryLaws.map((law) => (
+                                    <span key={law} className={styles.lawChip}>
+                                        {law}
+                                    </span>
+                                ))}
+                            </div>
+                        ) : null}
+                    </div>
+
+                    <div className={styles.caseList}>
+                        {similarCases.map((caseItem) => (
+                            <article key={caseItem.id} className={styles.caseCard}>
+                                <div className={styles.caseHeader}>
+                                    <div>
+                                        <span className={styles.caseLabel}>裁罰前例</span>
+                                        <h4 className={styles.caseTitle}>{caseItem.title}</h4>
+                                    </div>
+                                    <div className={styles.caseMeta}>
+                                        <span>{caseItem.authority}</span>
+                                        <span>{caseItem.date}</span>
+                                    </div>
+                                </div>
+
+                                <p className={styles.caseViolation}>「{caseItem.violationText}」</p>
+
+                                <div className={styles.caseBody}>
+                                    <div className={styles.caseInfoRow}>
+                                        <span className={styles.caseInfoLabel}>違規類型</span>
+                                        <strong>{caseItem.violationType}</strong>
+                                    </div>
+                                    <div className={styles.caseInfoRow}>
+                                        <span className={styles.caseInfoLabel}>裁罰結果</span>
+                                        <strong>{caseItem.penalty}</strong>
+                                    </div>
+                                    {caseItem.lawReference && (
+                                        <div className={styles.caseInfoRow}>
+                                            <span className={styles.caseInfoLabel}>常見法規</span>
+                                            <strong>{caseItem.lawReference}</strong>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className={styles.caseFooter}>
+                                    <div className={styles.matchTags}>
+                                        {caseItem.matchedBy.map((reason) => (
+                                            <span key={`${caseItem.id}-${reason}`} className={styles.matchTag}>
+                                                {matchedByLabels[reason]}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {caseItem.sourceUrl ? (
+                                        <a
+                                            href={caseItem.sourceUrl}
+                                            className={styles.caseLink}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            查看原始來源
+                                        </a>
+                                    ) : null}
+                                </div>
                             </article>
                         ))}
                     </div>

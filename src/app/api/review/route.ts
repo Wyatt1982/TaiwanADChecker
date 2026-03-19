@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ContentType, RiskLevel } from '@prisma/client'
 import { analyzeContent, getAvailableProvider, type ProductType } from '@/services/analyzer'
+import { buildLawSummary, matchPenaltyCases } from '@/services/caseMatcher'
 import { parseReviewAudienceMode } from '@/data/reviewModes'
 import { isMockAuthEnabled } from '@/lib/mockAuth'
 import { checkRateLimit, DEFAULT_RATE_LIMIT, API_RATE_LIMIT } from '@/lib/rateLimit'
 import { createReview, markReviewFailed, saveReviewResult } from '@/services/db/reviews'
+import type { ReviewIssue } from '@/types/review'
 
 function toPrismaRiskLevel(level: 'safe' | 'low' | 'medium' | 'high' | 'critical'): RiskLevel {
     const levelMap: Record<'safe' | 'low' | 'medium' | 'high' | 'critical', RiskLevel> = {
@@ -168,6 +170,16 @@ export async function POST(request: NextRequest) {
             undefined,
             parsedAudienceMode
         )
+        const similarCases = matchPenaltyCases({
+            content,
+            productType: productType as ProductType,
+            issues: result.issues as ReviewIssue[],
+        })
+        const lawSummary = buildLawSummary({
+            productType: productType as ProductType,
+            issues: result.issues as ReviewIssue[],
+            similarCases,
+        })
 
         const processingTime = Date.now() - startTime
 
@@ -194,6 +206,8 @@ export async function POST(request: NextRequest) {
             contentType,
             audienceMode: parsedAudienceMode,
             analyzedAt: new Date().toISOString(),
+            similarCases,
+            lawSummary,
             // 回傳使用量資訊
             usage: {
                 remaining: dailyLimit.remaining,

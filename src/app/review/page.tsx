@@ -11,28 +11,8 @@ import { getServiceStatus, isLLMAvailable, ServiceStatus } from '@/data/serviceS
 import { parseReviewAudienceMode, reviewModeConfigs, type ReviewAudienceMode } from '@/data/reviewModes'
 import { getUsageStatus, canUseReview, recordUsage } from '@/data/usageLimit'
 import { isMockAuthEnabled } from '@/lib/mockAuth'
+import type { ReviewApiResult } from '@/types/review'
 import styles from './page.module.css'
-
-type RiskLevel = 'safe' | 'low' | 'medium' | 'high' | 'critical'
-
-interface Issue {
-    type: string
-    text: string
-    severity: RiskLevel
-    law?: string
-    suggestion?: string
-}
-
-interface ReviewData {
-    riskLevel: RiskLevel
-    riskScore: number
-    issues: Issue[]
-    suggestions: string[]
-    revisedContent: string
-    processingTime: number
-    provider?: 'openai' | 'anthropic' | 'gemini' | 'mock'
-    audienceMode?: ReviewAudienceMode
-}
 
 const pageNotes: Record<
     ReviewAudienceMode,
@@ -63,7 +43,7 @@ export default function ReviewPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [loading, setLoading] = useState(false)
-    const [result, setResult] = useState<ReviewData | null>(null)
+    const [result, setResult] = useState<ReviewApiResult | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [audienceMode, setAudienceMode] = useState<ReviewAudienceMode>('business')
     const [showKolModal, setShowKolModal] = useState(false)
@@ -301,6 +281,8 @@ export default function ReviewPage() {
                                             revisedContent={result.revisedContent}
                                             processingTime={result.processingTime}
                                             provider={result.provider}
+                                            similarCases={result.similarCases}
+                                            lawSummary={result.lawSummary}
                                         />
                                     )}
 
