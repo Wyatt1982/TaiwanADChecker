@@ -75,7 +75,7 @@ export default function HomePage() {
           <div className={styles.container}>
             <div className={styles.heroGrid}>
               <div className={styles.heroCopy}>
-                <span className={styles.eyebrow}>AI 快審通 ADCheck.ai</span>
+                <span className={styles.eyebrow}>AI 快審通</span>
                 <h1 className={styles.heroTitle}>
                   <span className={styles.heroLine}>美業廣告送審</span>
                   <span className={styles.heroTitleAccent}>發布前先看風險</span>
@@ -116,7 +116,7 @@ export default function HomePage() {
                   <div className={styles.visualMedia}>
                     <Image
                       src="/images/hero.png"
-                      alt="AI 快審通 ADCheck.ai"
+                      alt="AI 快審通"
                       fill
                       sizes="(max-width: 1024px) 100vw, 420px"
                       className={styles.heroImage}
