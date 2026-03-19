@@ -3,11 +3,12 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
-import { regulations, categoryLabels, formatCurrency } from '@/data/regulations'
+import { regulations, penaltyCases, categoryLabels, formatCurrency, formatDate } from '@/data/regulations'
 import styles from './page.module.css'
 
 export default function RegulationsPage() {
     const [searchQuery, setSearchQuery] = useState('')
+    const latestPenaltyCases = penaltyCases.slice(0, 3)
 
     // 搜尋過濾
     const filteredRegulations = useMemo(() => {
@@ -85,10 +86,63 @@ export default function RegulationsPage() {
                             <span className={styles.statLabel}>個類別</span>
                         </div>
                         <div className={styles.statCard}>
+                            <span className={styles.statValue}>{penaltyCases.length}</span>
+                            <span className={styles.statLabel}>件開罰案例</span>
+                        </div>
+                        <div className={styles.statCard}>
                             <span className={styles.statValue}>4-400萬</span>
                             <span className={styles.statLabel}>罰款範圍</span>
                         </div>
                     </div>
+
+                    <section className={styles.overviewSection}>
+                        <div className={styles.overviewIntro}>
+                            <span className={styles.sectionTag}>法規中心摘要</span>
+                            <h2 className={styles.sectionTitle}>先看條文，再看真實開罰案例</h2>
+                            <p className={styles.sectionLead}>
+                                條文本身告訴你不能怎麼說，開罰案例則讓你看到實際會踩線的句子。
+                                兩者一起看，會比單看法條更容易抓到風險感。
+                            </p>
+                            <Link href="/cases" className={styles.sectionLink}>
+                                前往完整開罰案例庫
+                            </Link>
+                        </div>
+
+                        <div className={styles.casePreviewPanel}>
+                            <div className={styles.casePreviewHeader}>
+                                <div>
+                                    <span className={styles.sectionTag}>最新案例</span>
+                                    <h3 className={styles.casePreviewTitle}>最近更新的開罰案例</h3>
+                                </div>
+                                <Link href="/cases" className={styles.casePreviewMore}>
+                                    查看全部
+                                </Link>
+                            </div>
+
+                            <div className={styles.casePreviewGrid}>
+                                {latestPenaltyCases.map((caseItem) => {
+                                    const categoryInfo = categoryLabels[caseItem.category] || { label: caseItem.category, icon: '📋' }
+
+                                    return (
+                                        <article key={caseItem.id} className={styles.casePreviewCard}>
+                                            <div className={styles.casePreviewMeta}>
+                                                <span className={styles.casePreviewBadge}>
+                                                    {categoryInfo.icon} {categoryInfo.label}
+                                                </span>
+                                                <span className={styles.casePreviewDate}>{formatDate(caseItem.date)}</span>
+                                            </div>
+                                            <h4 className={styles.casePreviewCaseTitle}>{caseItem.title}</h4>
+                                            <p className={styles.casePreviewText}>{caseItem.violationText}</p>
+                                            <div className={styles.casePreviewFooter}>
+                                                <span className={styles.casePreviewAuthority}>{caseItem.authority}</span>
+                                                <span className={styles.casePreviewPenalty}>{caseItem.penalty}</span>
+                                            </div>
+                                        </article>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </section>
 
                     {/* 法規列表 */}
                     <div className={styles.regulationsList}>
