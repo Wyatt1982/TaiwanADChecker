@@ -1,3 +1,5 @@
+import { scrapedCases as rawScrapedCases } from './scraped-cases'
+
 // 台灣廣告法規資料
 export interface Regulation {
     id: string
@@ -26,6 +28,54 @@ export interface PenaltyCase {
     authority: string
     source?: string
     sourceUrl?: string
+}
+
+const namedHtmlEntities: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&apos;': "'",
+    '&#39;': "'",
+    '&nbsp;': ' ',
+}
+
+function decodeHtmlEntities(value: string): string {
+    return value
+        .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => String.fromCodePoint(parseInt(hex, 16)))
+        .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(parseInt(code, 10)))
+        .replace(/&(amp|lt|gt|quot|apos|nbsp|#39);/g, (entity: string) => namedHtmlEntities[entity] || entity)
+        .replace(/\s+/g, ' ')
+        .trim()
+}
+
+function normalizePenaltyCase(caseItem: PenaltyCase): PenaltyCase {
+    return {
+        ...caseItem,
+        title: decodeHtmlEntities(caseItem.title),
+        description: decodeHtmlEntities(caseItem.description),
+        violationType: decodeHtmlEntities(caseItem.violationType),
+        violationText: decodeHtmlEntities(caseItem.violationText),
+        penalty: decodeHtmlEntities(caseItem.penalty),
+        authority: decodeHtmlEntities(caseItem.authority),
+        source: caseItem.source ? decodeHtmlEntities(caseItem.source) : undefined,
+    }
+}
+
+function mergePenaltyCases(caseGroups: PenaltyCase[][]): PenaltyCase[] {
+    const seen = new Set<string>()
+
+    return caseGroups
+        .flat()
+        .filter((caseItem) => {
+            const dedupeKey = caseItem.sourceUrl || `${caseItem.title}-${caseItem.date}-${caseItem.authority}`
+            if (seen.has(dedupeKey)) {
+                return false
+            }
+            seen.add(dedupeKey)
+            return true
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
 
 // 法規資料庫
@@ -208,7 +258,7 @@ export const regulations: Regulation[] = [
 ]
 
 // 開罰案例資料庫
-export const penaltyCases: PenaltyCase[] = [
+const manualPenaltyCases: PenaltyCase[] = [
     {
         id: 'case-1',
         category: 'HEALTH_FOOD',
@@ -2035,6 +2085,12 @@ export const penaltyCases: PenaltyCase[] = [
         source: '臺北市政府衛生局醫療廣告違規裁處公告'
     }
 ]
+
+export const scrapedPenaltyCases: PenaltyCase[] = rawScrapedCases.map((caseItem) =>
+    normalizePenaltyCase(caseItem as PenaltyCase)
+)
+
+export const penaltyCases: PenaltyCase[] = mergePenaltyCases([manualPenaltyCases, scrapedPenaltyCases])
 
 // 分類標籤
 export const categoryLabels: Record<string, { label: string; icon: string }> = {
