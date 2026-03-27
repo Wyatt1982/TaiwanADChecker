@@ -1,90 +1,90 @@
 # KOL Ad Review Helper (AI 快審通)
 
-> **🤖 For AI Agents & Cursor**: Please read the **System Architecture & Key Decisions** section carefully before making changes.
+> **🤖 給 AI Agents 與 Cursor 的提示**：在進行任何更改之前，請仔細閱讀**系統架構與關鍵決策 (System Architecture & Key Decisions)**章節。
 
-## 🌟 Project Overview
+## 🌟 專案概述
 
-**KOL Ad Review Helper** is a Next.js application designed to streamline the workflow between Brands and KOLs (Key Opinion Leaders). It acts as an AI-powered compliance assistant, checking ad content against local regulations using Generative AI.
+**KOL Ad Review Helper (AI 快審通)** 是一個 Next.js 應用程式，旨在簡化品牌與 KOL (關鍵意見領袖) 之間的工作流程。它作為一個 AI 驅動的合規助手，利用生成式 AI 根據當地法規檢查廣告內容。
 
-## 🛠 System Architecture (Critical Context)
+## 🛠 系統架構 (關鍵背景)
 
-### 1. Database & ORM (PostgreSQL + Prisma Adapter)
-*   **Provider**: Supabase (PostgreSQL)
-*   **Connection Strategy**: **MUST** use `@prisma/adapter-pg` with `pg` driver (PostgreSQL) to support Vercel Serverless environment.
-    *   **Reason**: Standard Prisma Client exhausts connection limits in serverless.
-    *   **Ref**: `src/lib/prisma.ts` (Adapter Implementation).
-    *   **Schema**: `prisma/schema.prisma` (`engineType = "library"`).
+### 1. 資料庫與 ORM (PostgreSQL + Prisma Adapter)
+*   **提供者**: Supabase (PostgreSQL)
+*   **連線策略**: **必須**使用 `@prisma/adapter-pg` 搭配 `pg` 驅動程式 (PostgreSQL) 以支援 Vercel Serverless 環境。
+    *   **原因**: 標準 Prisma Client 在 Serverless 環境中會耗盡連線數限制。
+    *   **參考**: `src/lib/prisma.ts` (Adapter 實作)。
+    *   **Schema**: `prisma/schema.prisma` (`engineType = "library"`)。
 
-### 2. Authentication (Mock / Client-Side)
-*   **Current State**: **Mock Implementation** using `localStorage`.
-    *   **Ref**: `src/data/auth.ts` contains the mock logic and test accounts.
-    *   There is NO server-side session validation in `src/app/api` currently.
-*   **Future Goal**: Migrate to NextAuth (packages already installed).
+### 2. 身份驗證 (Mock / 客戶端)
+*   **目前狀態**: 使用 `localStorage` 的 **Mock 實作**。
+    *   **參考**: `src/data/auth.ts` 包含 Mock 邏輯與測試帳號。
+    *   目前 `src/app/api` 中**沒有**伺服器端的 Session 驗證。
+*   **未來目標**: 遷移至 NextAuth (套件已安裝)。
 
-### 3. AI Analysis Logic
-*   **Core Service**: `src/services/analyzer.ts`
-    *   **Provider**: Google Gemini (`google('gemini-2.0-flash')`) via Vercel AI SDK.
-    *   **Fallback**: Includes a regex-based `mockAnalyzeContent` for local dev without keys.
-*   **API Endpoint**: `src/app/api/review/route.ts`
+### 3. AI 分析邏輯
+*   **核心服務**: `src/services/analyzer.ts`
+    *   **提供者**: 透過 Vercel AI SDK 使用 Google Gemini (`google('gemini-2.0-flash')`)。
+    *   **備援機制**: 包含基於 Regex 的 `mockAnalyzeContent`，供本地開發在無 API Key 時使用。
+*   **API 端點**: `src/app/api/review/route.ts`
 
-### 4. System Settings (Global Config)
-*   **Storage**: Database-backed `SystemSetting` table (Key-Value JSON).
-*   **Access**: Server Actions in `src/app/actions/settings.ts`.
-    *   **Convention**: Use `getSystemStatus()` to read and `updateSystemStatusAction()` to write.
-    *   **Cache**: Updates trigger `revalidatePath` for immediate propagation.
+### 4. 系統設定 (全域設定)
+*   **儲存**: 資料庫驅動的 `SystemSetting` 表 (Key-Value JSON)。
+*   **存取**: `src/app/actions/settings.ts` 中的 Server Actions。
+    *   **慣例**: 使用 `getSystemStatus()` 讀取，使用 `updateSystemStatusAction()` 寫入。
+    *   **快取**: 更新會觸發 `revalidatePath` 以立即生效。
 
 ---
 
-## 🚀 Getting Started
+## 🚀 開始使用
 
-### 1. Environment Setup (`.env`)
-Create a `.env` file in the root directory:
+### 1. 環境設定 (`.env`)
+在根目錄建立 `.env` 檔案：
 
 ```env
-# Supabase Transaction Pooler (Port 6543) - Application Connection
+# Supabase Transaction Pooler (Port 6543) - 應用程式連線
 DATABASE_URL="postgresql://postgres.[user]:[password]@[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
 
-# Supabase Session Pooler (Port 5432) - Migrations (Direct)
+# Supabase Session Pooler (Port 5432) - 遷移 (直接連線)
 DIRECT_URL="postgresql://postgres.[user]:[password]@[region].pooler.supabase.com:5432/postgres"
 
 # AI Provider Key
 GOOGLE_GENERATIVE_AI_API_KEY="AIzaSy..."
 ```
 
-### 2. Installation & Run
+### 2. 安裝與執行
 
 ```bash
-# Install dependencies
+# 安裝依賴套件
 npm install
 
-# Generate Prisma Client (CRITICAL STEP)
-# Must run this whenever schema changes or after install
+# 產生 Prisma Client (關鍵步驟)
+# 每次 schema 變更或安裝後都必須執行此步驟
 npx prisma generate
 
-# Start Dev Server
+# 啟動開發伺服器
 npm run dev
 ```
 
 ---
 
-## 📦 Deployment (Vercel)
+## 📦 部署 (Vercel)
 
-*   **Build Command**: The `package.json` has a `postinstall` script (`prisma generate`) to ensure client generation on Vercel.
-*   **Environment Variables**: Ensure `DATABASE_URL`, `DIRECT_URL`, and `GOOGLE_GENERATIVE_AI_API_KEY` are set in Vercel Project Settings.
+*   **建置指令**: `package.json` 有設定 `postinstall` 腳本 (`prisma generate`) 以確保在 Vercel 上產生 Client。
+*   **環境變數**: 請確保 `DATABASE_URL`、`DIRECT_URL` 和 `GOOGLE_GENERATIVE_AI_API_KEY` 已在 Vercel 專案設定中設定。
 
 ---
 
-## 🔧 Maintenance & Troubleshooting
+## 🔧 維護與疑難排解
 
-### Common Issues
+### 常見問題
 *   **"PrismaClientInitializationError: ... engine type 'client' requires ..."**
-    *   **Fix**: You are likely missing the `adapter` config. Check `src/lib/prisma.ts`.
+    *   **解決方法**: 您可能缺少 `adapter` 設定。請檢查 `src/lib/prisma.ts`。
 *   **"Repository not found" (Git Push)**
-    *   **Fix**: Check if the repo exists on GitHub. If private, ensure your PAT (Personal Access Token) has `repo` AND `workflow` scopes.
+    *   **解決方法**: 檢查 GitHub 上是否存在該 repo。如果是私有的，請確保您的 PAT (Personal Access Token) 具有 `repo` 和 `workflow` 權限。
 
-### Folder Structure
-*   `src/app/(admin)`: Admin dashboard pages.
-*   `src/app/actions`: Server Actions (Backend Logic).
-*   `src/services`: Business logic (AI, Analysis).
-*   `src/data`: Mock data and types.
-*   `prisma`: DB Schema and migrations.
+### 資料夾結構
+*   `src/app/(admin)`: 後台管理頁面。
+*   `src/app/actions`: Server Actions (後端邏輯)。
+*   `src/services`: 商業邏輯 (AI、分析)。
+*   `src/data`: Mock 資料與型別。
+*   `prisma`: DB Schema 與遷移檔。
